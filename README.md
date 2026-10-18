@@ -41,9 +41,25 @@ you can update it over ADB (see [Installing on the vehicle](#installing-on-the-v
 
 ---
 
+## Removal
+
+To remove the app from the car completely, first open the left slide-out menu
+and tap the **Prepare for Removal** button (under Settings). It stops and cleans
+up everything running in the background — the helper processes (camera recording,
+qcam tools), the files under `/data/local/tmp`, and it also turns wireless ADB
+back off. After that, uninstall the app from the car as usual.
+
+> If you uninstall the app **without** doing this first, the background tools
+> keep running on the car (ADB, the camera recording processes, etc.), because
+> Android does not run any app code during an uninstall. Your recordings in
+> `Movies/DiLinkCam` are kept either way.
+
+---
+
 ## Table of Contents
 
 0. [Installing the APK (USB method)](#installing-the-apk-usb-method-recommended-for-first-install)
+0. [Removal](#removal)
 1. [Features](#features)
 2. [Requirements](#requirements)
 3. [Architecture](#architecture)
