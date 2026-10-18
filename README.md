@@ -10,8 +10,32 @@ H.264 recording of all 4 cameras**.
 
 ---
 
+## Installing the APK (USB method, recommended for first install)
+
+On a first install, `adb install` does **not** work: ADB is not enabled on the
+car yet, and it's this app itself that enables ADB afterwards. So install the APK
+from a USB drive instead:
+
+1. Format a USB flash drive as **FAT32**.
+2. On it, create a folder named **`Third Party Apps <country-code>`** (e.g.
+   `Third Party Apps 90` — `90` is Turkey's country code). Use your own country's
+   code and test it.
+3. Put the APK you want to install (`DiLink-Inspector-<version>.apk`) inside that
+   folder.
+4. Plug the USB drive into the car and install the APK from it. The password for
+   installing third-party apps is **`BYD8155F`**.
+
+Applies to BYD Global on the 8155 (51.x) chipset. Tested on Tang 2025
+(firmware `51.1.2.2411280.1`).
+
+Once the app is installed and opened once, it enables wireless ADB, after which
+you can update it over ADB (see [Installing on the vehicle](#installing-on-the-vehicle)).
+
+---
+
 ## Table of Contents
 
+0. [Installing the APK (USB method)](#installing-the-apk-usb-method-recommended-for-first-install)
 1. [Features](#features)
 2. [Requirements](#requirements)
 3. [Architecture](#architecture)
