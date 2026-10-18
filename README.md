@@ -4,6 +4,14 @@ A system that accesses the 360° surround cameras on the BYD DiLink **51.x**
 (SA8155, Android 11) head unit, with live viewing and **simultaneous automatic
 H.264 recording of all 4 cameras**.
 
+> **Notable:** this app **enables Developer options, USB debugging and wireless
+> ADB by itself** — without the user ever opening the developer menu. It flips
+> `development_settings_enabled` / `adb_enabled` / `adb_wifi_enabled` and brings
+> up `adbd` on TCP 5555 through the TS Settings and OTA-test back doors (see
+> [Enabling Wireless ADB](#enabling-wireless-adb)). As far as we know there is no
+> other tool that does this on this firmware version, which is why it's worth
+> calling out.
+
 > ⚠️ **Warning:** This project runs on the in-vehicle Android system. Misuse may
 > compromise system stability. Recordings and vehicle camera use are subject to
 > your country's laws. All risk is the user's.
