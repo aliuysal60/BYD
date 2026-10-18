@@ -55,7 +55,8 @@ public final class Mp4Recorder {
     /** Kurtarma günlüğü: uygulama özel dizininde ham örnek akışı. */
     private DataOutputStream journal;
     private File journalFile;
-    private static final int JOURNAL_MAGIC = 0x43414A31; // "CAJ1"
+    private static final int JOURNAL_MAGIC = 0x43414A31;    // "CAJ1" (eski: codec yok → AVC varsayılır)
+    private static final int JOURNAL_MAGIC_V2 = 0x43414A32; // "CAJ2" (codec/MIME başlıkta)
 
     public Mp4Recorder(int width, int height) { this.width = width; this.height = height; }
 
@@ -93,6 +94,19 @@ public final class Mp4Recorder {
             v.put(MediaStore.Video.Media.IS_PENDING, 1);
             uri = ctx.getContentResolver().insert(MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY), v);
             if (uri == null) throw new IllegalStateException(ctx.getString(R.string.rec_err_mediastore));
+            // MediaStore ad çakışmasında " (1)", " (2)" ekler (4 kamera aynı
+            // saniyede başlar). Kurtarma journal'ının GERÇEK display_name ile
+            // eşleşmesi için adı geri oku — yoksa journal "...213408.bin" ama
+            // dosya "...213408 (1).mp4" olur, remux journal'ı bulamaz, kayıt
+            // kurtarılamaz ve pending kalır.
+            try {
+                android.database.Cursor dc = ctx.getContentResolver().query(
+                        uri, new String[]{MediaStore.Video.Media.DISPLAY_NAME}, null, null, null);
+                if (dc != null) {
+                    try { if (dc.moveToFirst()) { String real = dc.getString(0); if (real != null && real.endsWith(".mp4")) name = real; } }
+                    finally { dc.close(); }
+                }
+            } catch (Exception ignored) {}
             pfd = ctx.getContentResolver().openFileDescriptor(uri, "rw");
             if (pfd == null) throw new IllegalStateException(ctx.getString(R.string.rec_err_mp4_open));
             muxer = new MediaMuxer(pfd.getFileDescriptor(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
@@ -113,9 +127,10 @@ public final class Mp4Recorder {
         journalFile = new File(ctx.getFilesDir(), "cam_journal_" + name.substring(0, name.length() - 4) + ".bin");
         try {
             journal = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(journalFile)));
-            journal.writeInt(JOURNAL_MAGIC);
+            journal.writeInt(JOURNAL_MAGIC_V2);   // v2: başlıkta codec/MIME de var
             journal.writeInt(width);
             journal.writeInt(height);
+            journal.writeUTF(mime);               // "video/avc" veya "video/hevc"
             journal.flush();
         } catch (IOException e) {
             journal = null; // günlüksüz devam: kurtarma devre dışı
@@ -363,15 +378,28 @@ public final class Mp4Recorder {
     /** Günlükten yeni MP4 üret; başarılıysa günlüğü sil ve true döndür. */
     private static boolean remux(Context ctx, String displayName) {
         if (displayName == null) return false;
-        File jf = new File(ctx.getFilesDir(), "cam_journal_" + displayName.replace(".mp4", "") + ".bin");
+        String base = displayName.endsWith(".mp4") ? displayName.substring(0, displayName.length() - 4) : displayName;
+        File jf = new File(ctx.getFilesDir(), "cam_journal_" + base + ".bin");
+        // Geriye uyumluluk: eski kayıtlarda MediaStore " (N)" ekliyordu ama
+        // journal parantezsiz addaydı → journal'ı " (N)" soyulmuş adla da dene.
+        if (!jf.isFile()) {
+            String stripped = base.replaceFirst("\\s*\\(\\d+\\)$", "");
+            File alt = new File(ctx.getFilesDir(), "cam_journal_" + stripped + ".bin");
+            if (alt.isFile()) jf = alt;
+        }
         if (!jf.isFile()) return false;
         Uri out = null;
         ParcelFileDescriptor pfd = null;
         DataInputStream in = null;
         try {
             in = new DataInputStream(new BufferedInputStream(new FileInputStream(jf), 1 << 16));
-            if (in.readInt() != JOURNAL_MAGIC) return false;
+            int magic = in.readInt();
+            if (magic != JOURNAL_MAGIC && magic != JOURNAL_MAGIC_V2) return false;
             int w = in.readInt(), h = in.readInt();
+            // v2 başlığında codec/MIME var; v1'de yok → bu araçta kayıt AVC olduğu
+            // için AVC varsay (remux eskiden HEVC varsayıyordu ve bu yüzden
+            // kurtarma SESSİZCE başarısız oluyordu — pending dosyalar kalıyordu).
+            String recMime = (magic == JOURNAL_MAGIC_V2) ? in.readUTF() : MIME_AVC;
 
             ContentValues v = new ContentValues();
             v.put(MediaStore.Video.Media.DISPLAY_NAME, displayName);
@@ -384,7 +412,7 @@ public final class Mp4Recorder {
             if (pfd == null) throw new IOException("fd");
             MediaMuxer m = new MediaMuxer(pfd.getFileDescriptor(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
             int track = -1;
-            MediaFormat fmt = MediaFormat.createVideoFormat(MIME_HEVC, w, h);
+            MediaFormat fmt = MediaFormat.createVideoFormat(recMime, w, h);
             java.io.ByteArrayOutputStream csd0 = new java.io.ByteArrayOutputStream(), csd1 = new java.io.ByteArrayOutputStream();
             while (true) {
                 int type, flags, len; long pts;

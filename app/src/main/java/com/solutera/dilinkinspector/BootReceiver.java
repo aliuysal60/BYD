@@ -36,30 +36,32 @@ public final class BootReceiver extends BroadcastReceiver {
         } catch (Exception ignored) {}
 
         // 2) ADB zincirini arka planda yeniden aç (servis kendi de dener ama
-        //    sistem servisleri hazır olmayabilir; çift güvence)
+        //    sistem servisleri hazır olmayabilir; çift güvence).
+        //    ÖNEMLİ: ÖNCE 5555 açık mı bak; AÇIKSA hiç property yazma ve çık.
+        //    Property yazmak (OTA/TsPropBridge) adbd'yi RESTART eder; bu, servisin
+        //    bootstrap'inin o an kullandığı ADB bağlantısını koparıp "ADB bağlı
+        //    değil → kamera açılamadı" kısır döngüsüne yol açıyordu. 5555 zaten
+        //    dinliyorsa dokunma — kurulum zaten ilerleyecek.
         new Thread(() -> {
             try { Thread.sleep(8000); } catch (InterruptedException ignored) { return; }
             for (int attempt = 1; attempt <= 4; attempt++) {
-                try {
-                    try {
-                        OtaTestCommand.call(context, svc -> OtaTestCommand.y(svc, 31, 77), 8000);
-                    } catch (Exception ignored) {}
-                    try {
-                        TsPropBridge.enableWirelessAdb(context);
-                    } catch (Exception ignored) {}
-                    // doğrula
-                    java.net.Socket s = null;
-                    try {
-                        s = new java.net.Socket();
-                        s.connect(new java.net.InetSocketAddress(
-                                java.net.InetAddress.getLoopbackAddress(), 5555), 3000);
-                        s.close();
-                        return; // 5555 açık — tamam
-                    } catch (Exception e) {
-                    } finally { try { if (s != null) s.close(); } catch (Exception ignored) {} }
-                } catch (Exception ignored) {}
+                if (port5555Open()) return; // zaten açık — adbd'ye dokunma, çık
+                // Açık değil: property'leri yaz (adbd'yi kaldır/aç)
+                try { OtaTestCommand.call(context, svc -> OtaTestCommand.y(svc, 31, 77), 8000); } catch (Exception ignored) {}
+                try { TsPropBridge.enableWirelessAdb(context); } catch (Exception ignored) {}
                 try { Thread.sleep(6000); } catch (InterruptedException ignored) { return; }
+                if (port5555Open()) return; // yazımdan sonra açıldıysa tamam
             }
         }, "boot-adb").start();
+    }
+
+    /** 127.0.0.1:5555 (adbd) dinliyor mu — property yazmadan hızlı kontrol. */
+    private static boolean port5555Open() {
+        try (java.net.Socket s = new java.net.Socket()) {
+            s.connect(new java.net.InetSocketAddress(java.net.InetAddress.getLoopbackAddress(), 5555), 2000);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
