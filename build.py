@@ -13,7 +13,7 @@ SDK = Path(os.environ.get('ANDROID_HOME', os.environ.get('ANDROID_SDK_ROOT', str
 BT = SDK / 'build-tools/35.0.0'
 ANDROID = SDK / 'platforms/android-35/android.jar'
 WIN = os.name == 'nt'
-VERSION = '4.14.3'
+VERSION = '4.15.0'
 
 def run(args):
     print('> ' + ' '.join(map(str, args)), flush=True)
