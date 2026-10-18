@@ -47,3 +47,36 @@ otomatik seç. Diller: Türkçe, İngilizce, İspanyolca, Fransızca, Almanca, R
 - [x] `python build.py` hatasız (aapt2 çoklu locale'i otomatik derler).
 - [x] Kaçırılan hardcoded Türkçe string kalmadığını doğrula (grep).
 - [!] Araçta test: sistem dili ile açılışta doğru dil görünüyor mu (mümkünse).
+
+## Faz 5: Performans — 4 kamera kayıtta sistem yavaşlaması (Öncelik 1)
+
+> Hedef: 4 kamera eşzamanlı kayıtta sistemi yavaşlatan ham kare disk trafiğini
+> ve boşa giden yükleri azalt. (Başka bir modelin önerileri gerçek kodla
+> doğrulandı; yüksek-etki/düşük-risk 3 madde seçildi.)
+
+- [x] FPS 10→6: qcam_loop8.c g_dumpframe 3→5 (dosya yazma/rename/okuma + TCP
+      yükü ~%40 azalır; dashcam için 6 fps yeterli). QDF/QFPS'yi spawn_tool'dan
+      ÖNCE oku (ilk sürecin ayarı kaçırması hatası giderildi). QCAM_VERSION 10→11
+      + HELPER_VER 10→11 senkron.
+- [x] C istemci sızıntısı: broadcast_frames ölü istemcileri (alive=0) listeden
+      çıkarmıyordu → reap_dead_clients() ile her broadcast + periyodik temizle.
+- [x] Arka plan önizleme: MainActivity onStop'ta WANT_LIVE=false (görünmeyen
+      önizleme 250 ms'de bir YUV→RGB + Bitmap üretmesin); onStart geri açar.
+      KAYIT etkilenmez.
+- [x] Derleme 4.15.2 (versionCode 82) — NDK ile qcam_loop8 yeniden derlendi.
+- [ ] Araçta test: FPS ~6'ya düştü mü (durum.txt RD_FRAME artış hızı), sistem
+      akıcılığı, canlı izleme arka plan/geri dönüş, kayıt oynatılabilir mi,
+      COLOR_FORMAT değeri (madde 2 Flexible yolu aktif mi?).
+
+## Faz 6: Performans — Öncelik 2/3 (araç testinden sonra değerlendirilecek)
+
+> Hedef: İlk grup yeterli gelmezse veya onaylanırsa kalan doğrulanmış maddeler.
+
+- [ ] "D" TCP talep protokolünü tamamla + kamera-bazlı talep (yalnız-canlı
+      izlemede 3 kamera boşuna üretmesin) — madde 6.
+- [ ] stop() EOS bekleme düzeltmesi (dequeueInputBuffer 50µs → drain döngüsü;
+      "Son kaydı kaydet"/segment dönüşü son kareleri kaybetmesin) — ek bulgu.
+- [ ] Segment dönüşlerini kameralar arası kaydır (4 encoder aynı anda yeniden
+      kurulmasın) — madde 8 güvenli versiyon.
+- [ ] pickColorFormat finally temizliği (madde 4) + boot çift-bootstrap guard
+      (madde 11) — küçük sigortalar.

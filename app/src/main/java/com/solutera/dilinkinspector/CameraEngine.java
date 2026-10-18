@@ -56,7 +56,7 @@ public final class CameraEngine {
      *  v7: KAMERA BAŞINA AYRI ÖRNEK — Ön/Arka/Sağ/Sol aynı anda akar.
      *  frame_%d<cam>%i.raw yamalı qcam_patched_c<cam> varyantları, kamera başına
      *  cam_demand_<cam> talep dosyası ve 7800+cam TCP portu. */
-    public static final int HELPER_VER = 10;
+    public static final int HELPER_VER = 11;
     public static final int[] MULTI_CAMS = {0, 1, 2, 3};
 
     /** Son başlatılan yardımcı kamerası (yardımcı tek kamera ile çalışır). */

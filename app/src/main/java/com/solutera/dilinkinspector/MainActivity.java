@@ -60,6 +60,22 @@ public final class MainActivity extends Activity {
         pollStatus(); // durum + canlı kare döngüsü
     }
 
+    @Override protected void onStart() {
+        super.onStart();
+        // Geri dönüldü: canlı sayfadaysak akış talebini geri aç (liveOn korunur).
+        if (liveOn) ParkCamService.WANT_LIVE=true;
+    }
+
+    @Override protected void onStop() {
+        // Sayfa artık GÖRÜNMÜYOR (başka uygulamaya geçildi / ekran kapandı):
+        // canlı akış talebini bırak. Aksi halde görünmeyen önizleme 250 ms'de bir
+        // tam çözünürlük YUV→RGB + yeni Bitmap üretmeye devam ederdi (boşa yük).
+        // KAYIT bundan ETKİLENMEZ — RECORDING, WANT_LIVE'dan bağımsızdır; yalnız
+        // canlı önizleme durur. liveOn korunur, onStart geri açar.
+        ParkCamService.WANT_LIVE=false;
+        super.onStop();
+    }
+
     @Override protected void onDestroy() {
         ParkCamService.WANT_LIVE=false; // sayfa kapandı, akış talebini bırak
         super.onDestroy();

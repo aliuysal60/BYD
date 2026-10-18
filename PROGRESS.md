@@ -93,3 +93,61 @@
 
 ### Sonraki Adım
 - Araç açılınca: kur, kayıt sürerken butona bas, o anki segment oynatılabilir mp4 oluyor mu test et
+
+---
+
+## [2026-10-18] — Performans: 4 kamera kayıtta yavaşlama (Öncelik 1)
+
+**Faz:** 5 — Performans (Öncelik 1)
+**Görev:** FPS düşür + C istemci sızıntısı + arka plan önizleme
+**Durum:** Tamamlandı (kod + derleme); araç testi bekliyor
+
+### Bağlam
+Başka bir modelin 11 maddelik performans önerisi gerçek kodla satır satır
+doğrulandı. Çoğu gerçek; birkaçı eski/çözülmüş mimariyi tarif ettiği için
+reddedildi (madde 3/5: pullerLoop zaten kısa-ömürlü işçi + watchdog). Madde 1'in
+"dosya yolunu kaldır" çözümü imkânsız (qcam_patched kapalı kaynak qcarcam_test);
+gerçekçi kazanç FPS düşürmek. Kullanıcı Öncelik 1 + 6 fps seçti.
+
+### Yapılanlar
+- qcam_loop8.c: g_dumpframe 3→5 (10→6 fps). qcam_patched'e -dumpFrame=5 geçer;
+  ham .raw yazma/rename + diskten geri okuma + TCP yükü ~%40 azalır. Bu, 4 kamera
+  kayıtta sistemi yavaşlatan ASIL darboğazdı (saniyede ~157 MB dosya trafiği).
+- qcam_loop8.c: QDF/QFPS env okuması spawn_tool()'dan ÖNCEYE taşındı — eskiden
+  ilk süreç varsayılan değerle başlayıp env ayarını kaçırıyordu (madde 7).
+- qcam_loop8.c: reap_dead_clients() eklendi; broadcast_frames ölü istemcileri
+  (alive=0) listeden çıkarıp free etmiyordu → Java ~8 sn'de bir yeniden
+  bağlandığından liste sınırsız büyüyordu (madde 10). Her broadcast sonrası +
+  her 300 turda (kare gelmese de) temizlenir.
+- QCAM_VERSION 10→11, HELPER_VER 10→11 (senkron — cihazdaki binary MD5+sürüm
+  ile yenilenir).
+- MainActivity: onStop()'ta WANT_LIVE=false, onStart()'ta liveOn ise geri aç.
+  Görünmeyen önizleme (başka uygulama/ekran kapalı) 250 ms'de bir tam çözünürlük
+  YUV→RGB + yeni Bitmap üretmesin (madde 9). KAYIT bundan ETKİLENMEZ.
+- Sürüm 4.15.1→4.15.2, versionCode 81→82.
+
+### Oluşturulan/Değiştirilen Dosyalar
+- `tools/native/qcam_loop8.c` — fps 6, QDF erken okuma, istemci reaper, v11
+- `app/src/main/java/.../CameraEngine.java` — HELPER_VER 11
+- `app/src/main/java/.../MainActivity.java` — onStart/onStop WANT_LIVE yönetimi
+- `build.py` — VERSION 4.15.2
+- `app/src/main/AndroidManifest.xml` — versionCode 82, versionName 4.15.2
+- `dist/DiLink-Inspector-4.15.2.apk` — SHA-256 6019eb502002c1586ca223d36dbccb068b0b4c4751ae0104e81bfbbd7de22ccb
+
+### Alınan Kararlar
+- FPS 6 (dumpFrame=5): dashcam için yeterli, plaka/olay okunur, yük ~%40 azalır.
+- Madde 1'in dosya yolunu kaldırma kısmı YAPILMADI: qcam_patched kapalı kaynak,
+  belleğe yazdırılamaz. FPS düşürmek pratik eşdeğeri.
+- Madde 2 (Flexible YUV kopyalama) ERTELENDİ: muhtemelen aktif değil (cihazda
+  QCOM SemiPlanar seçiliyor olmalı). durum.txt COLOR_FORMAT ile doğrulanacak.
+- Madde 3/5 REDDEDİLDİ: mevcut mimari (kısa-ömürlü işçi + watchdog) zaten çözmüş.
+
+### Sorunlar / Notlar
+- C'de reap, client_thread'in detached olması ve bitişte alive=0 set edip c'ye
+  dokunmadan dönmesine dayanıyor — reaper güvenle free eder.
+- Test edilecek: FPS gerçekten 6 mı (RD_FRAME artış hızı), sistem akıcılığı,
+  önizleme arka plan/geri dönüş, kayıt oynatılabilirlik, COLOR_FORMAT.
+
+### Sonraki Adım
+- Araç açıldığında 4.15.2'yi kur, yukarıdaki test listesini uygula. Öncelik 1
+  yeterli gelirse Faz 6 (Öncelik 2/3) opsiyonel kalır.

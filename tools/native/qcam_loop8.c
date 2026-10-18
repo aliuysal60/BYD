@@ -36,7 +36,7 @@
 
 #define DIRPATH "/data/local/tmp"
 #define FRAME_SIZE 3932160L
-#define QCAM_VERSION 10
+#define QCAM_VERSION 11
 #define BASE_PORT 7800
 
 /* Kaynak UYVY: 1920x1024. Uygulamanin kullandigi etkin alan: sol-ust 1280x960. */
@@ -61,7 +61,11 @@ static int g_cam = 0;
 static long g_min_us = 83333;
 static volatile time_t g_tcp_demand = 0; /* "D" komutu ile tazeLENIR */
 static int g_burst = 1;       /* QBURST: tek yazışta kuyruklanan '21' sayısı */
-static int g_dumpframe = 3;   /* QDF: her N'inci kare dökülür → 30/N fps */
+static int g_dumpframe = 5;   /* QDF: her N'inci kare dökülür → 30/N fps.
+                               * v11: 3→5 (10→6 fps). Dashcam için 6 fps yeterli;
+                               * dosya yazma/rename/okuma + TCP yükü ~%40 azalır
+                               * (4 kamera eşzamanlı kayıtta sistemi yavaşlatan
+                               * asıl darboğaz ham kare disk trafiğiydi). */
 
 static char pidfile[96], verfile[96], demandfile[96], snapfile[96];
 
@@ -255,6 +259,21 @@ static void uyvy_to_nv12(const unsigned char* uyvy, unsigned char* nv12) {
     }
 }
 
+/* Ölü istemcileri (alive==0) listeden çıkar + free et. client_thread detached
+ * ve bittiğinde alive=0 set edip c'ye bir daha dokunmadan döner; bu yüzden
+ * reaper free edebilir. Aksi halde Java ~8 sn'de bir yeniden bağlandığından
+ * liste sınırsız büyür ve her kare tüm ölü düğümler gereksiz dolaşılırdı. */
+static void reap_dead_clients(void) {
+    pthread_mutex_lock(&clients_lock);
+    struct client** pp = &clients;
+    while (*pp) {
+        struct client* c = *pp;
+        if (!c->alive) { *pp = c->next; free(c); }
+        else pp = &c->next;
+    }
+    pthread_mutex_unlock(&clients_lock);
+}
+
 static void broadcast_frames(void) {
     static unsigned char* frame_buf = NULL;
     static unsigned char* nv12_buf = NULL;
@@ -287,6 +306,7 @@ static void broadcast_frames(void) {
         if (w1 != 16 || w2 != NV12_SIZE) { c->alive = 0; shutdown(c->fd, SHUT_RDWR); }
     }
     pthread_mutex_unlock(&clients_lock);
+    reap_dead_clients(); /* bu turda ölen + client_thread'de kopanları temizle */
 }
 
 int main(int argc, char** argv) {
@@ -355,14 +375,9 @@ int main(int argc, char** argv) {
     pthread_t acceptor = 0;
     if (listen_fd >= 0) { pthread_create(&acceptor, NULL, acceptor_thread, &listen_fd); pthread_detach(acceptor); }
 
-    int tool_ok = spawn_tool();
-    printf(tool_ok ? "hazir: kamera %d akiyor\n" : "uyari: ilk kare alinamadi, yeniden denenecek\n", g_cam);
-    move_snaps();
-
-    time_t last_dump = time(NULL);
-    long loops = 0, respawns = 0;
-    time_t demand_last_fresh = time(NULL);
-    /* fps: QDF (her N'inci kare, 30/N fps). Öntanımlı N=3 → 10 fps. */
+    /* fps: QDF (her N'inci kare, 30/N fps). Öntanımlı N=5 → 6 fps.
+     * ÖNEMLİ (v11): QDF/QFPS, spawn_tool()'dan ÖNCE okunmalı — yoksa ilk süreç
+     * varsayılan g_dumpframe ile başlar ve env ayarını kaçırırdı (eski hata). */
     const char* dfenv = getenv("QDF");
     if (dfenv) { int v = atoi(dfenv); if (v >= 1 && v <= 30) g_dumpframe = v; }
     const char* fpsenv = getenv("QFPS");
@@ -370,6 +385,14 @@ int main(int argc, char** argv) {
     if (fpsenv) { long v = atol(fpsenv); if (v >= 1 && v <= 30) fps_cap = v; }
     g_min_us = 1000000L / fps_cap;
     printf("mod: otonom döküm (-%d. kare) hedef %.0f fps\n", g_dumpframe, 1000000.0 / g_min_us);
+
+    int tool_ok = spawn_tool();
+    printf(tool_ok ? "hazir: kamera %d akiyor\n" : "uyari: ilk kare alinamadi, yeniden denenecek\n", g_cam);
+    move_snaps();
+
+    time_t last_dump = time(NULL);
+    long loops = 0, respawns = 0;
+    time_t demand_last_fresh = time(NULL);
     while (running) {
         usleep(30000); /* 30 ms döngü */
         int demanded = demand_fresh();
@@ -401,7 +424,7 @@ int main(int argc, char** argv) {
                 kill_child(); tool_ok = spawn_tool(); last_dump = time(NULL);
             }
         }
-        if (++loops % 300 == 0) printf("dongu %ld tasi %ld\n", loops, g_counter);
+        if (++loops % 300 == 0) { printf("dongu %ld tasi %ld\n", loops, g_counter); reap_dead_clients(); }
     }
 
     printf("kapanis\n");
