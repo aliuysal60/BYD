@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ParkCam</string>
+
+    <!-- ===== Navigation / menu ===== -->
+    <string name="menu_home">🏠  Inicio</string>
+    <string name="menu_live_camera">📷  Cámara en vivo</string>
+    <string name="menu_settings">⚙  Ajustes</string>
+    <string name="menu_prepare_vehicle">★  Preparar vehículo</string>
+    <string name="menu_prepare_removal">✕  Preparar desinstalación</string>
+
+    <!-- ===== Home page ===== -->
+    <string name="section_status">Estado</string>
+    <string name="section_event_log">Registro de configuración / eventos</string>
+    <string name="section_live_camera">Cámara en vivo</string>
+    <string name="label_live_camera">Cámara en vivo: </string>
+    <string name="home_hint">Las grabaciones se guardan en Movies/DiLinkCam. La grabación comienza automáticamente al encender el vehículo y se detiene 2 minutos después de apagarlo.</string>
+    <string name="live_hint">LAS 4 CÁMARAS A LA VEZ: con el vehículo encendido, las cuatro se graban simultáneamente (Movies/DiLinkCam). La cámara que selecciones aquí se muestra en vivo.</string>
+
+    <!-- status / vehicle / recording lines (prefix + dynamic value) -->
+    <string name="status_prefix">estado: </string>
+    <string name="status_checking">estado: comprobando…</string>
+    <string name="status_waiting_service">estado: esperando al servicio…</string>
+    <string name="vehicle_prefix">vehículo: </string>
+    <string name="vehicle_unknown">vehículo: ?</string>
+    <string name="rec_off">grabación: desactivada</string>
+    <string name="rec_recording">grabación: ● GRABANDO %1$02d:%2$02d • %3$s</string>
+    <string name="live_off">en vivo: desactivado</string>
+    <string name="live_waiting">en vivo: esperando…</string>
+    <string name="live_running">en vivo: cámara %1$d • %2$dx%3$d</string>
+
+    <!-- live button -->
+    <string name="btn_live_start">▶ INICIAR TRANSMISIÓN EN VIVO</string>
+    <string name="btn_live_stop">■ DETENER TRANSMISIÓN</string>
+
+    <!-- toasts -->
+    <string name="toast_setup_started">Configuración iniciada — observa el registro en la página de inicio</string>
+    <string name="toast_cleanup_started">Limpieza iniciada — observa el registro en la página de inicio</string>
+    <string name="toast_send_failed">No se pudo enviar: %1$s</string>
+
+    <!-- removal dialog -->
+    <string name="dlg_removal_title">Preparar desinstalación</string>
+    <string name="dlg_removal_message">Se detienen los procesos auxiliares, se eliminan los archivos de /data/local/tmp y se desactiva el ADB inalámbrico. Usa esto antes de desinstalar la app. (Tus grabaciones permanecen en Movies/DiLinkCam.)</string>
+    <string name="dlg_cancel">Cancelar</string>
+    <string name="dlg_clean">Limpiar</string>
+
+    <!-- ===== Service: notification / status ===== -->
+    <string name="svc_starting">Iniciando…</string>
+    <string name="svc_status_starting">iniciando…</string>
+    <string name="svc_status_service_started">servicio iniciado</string>
+    <string name="svc_status_ready">listo</string>
+    <string name="svc_status_camera_failed">no se pudo abrir la cámara — se reintentará</string>
+    <string name="svc_status_adb_off">ADB desactivado — se reintentará</string>
+    <string name="svc_status_error">error: %1$s</string>
+    <string name="svc_status_cleaned">limpieza completada — la app se puede desinstalar</string>
+
+    <!-- service log messages -->
+    <string name="log_setup_begin">=== iniciando configuración ===</string>
+    <string name="log_ready">=== LISTO ✓ (4 cámaras, intento %1$d) ===</string>
+    <string name="log_setup_error">error de configuración (intento %1$d): %2$s</string>
+    <string name="log_setup_manual">configuración activada manualmente</string>
+    <string name="log_cleanup_begin">preparación de desinstalación iniciada</string>
+    <string name="log_cleaned">=== limpieza completada ===</string>
+    <string name="log_cleanup_error">error de limpieza: %1$s</string>
+    <string name="log_recover">recuperación: %1$s</string>
+    <string name="log_test_recording">GRABACIÓN DE PRUEBA activada (60 s)</string>
+    <string name="log_rec_started">GRABACIÓN INICIADA (%1$s) — %2$d/4 cámaras</string>
+    <string name="log_rec_stopped">GRABACIÓN DETENIDA (%1$s) — %2$d fotogramas en total</string>
+    <string name="log_old_rec_deleted">%1$d grabación(es) antigua(s) eliminada(s) (≥20 GB)</string>
+    <string name="log_recovered">recuperada: %1$s</string>
+
+    <!-- recording reasons -->
+    <string name="reason_vehicle_on">vehículo encendido</string>
+    <string name="reason_test">prueba</string>
+    <string name="reason_test_file_trigger">prueba (disparador por archivo)</string>
+    <string name="reason_manual_stop">detenida manualmente</string>
+    <string name="reason_test_elapsed">duración de la prueba finalizada</string>
+    <string name="reason_cleanup">limpieza</string>
+    <string name="reason_vehicle_off_tail">vehículo apagado +%1$d min transcurridos</string>
+    <string name="log_vehicle_off_tail">vehículo apagado — la grabación continúa %1$d min más</string>
+
+    <!-- keeper -->
+    <string name="log_keeper_current">Keeper en ejecución y actualizado ✓ (versión %1$d)</string>
+    <string name="log_keeper_refresh">Keeper antiguo/incompatible (versión %1$d ≠ %2$d) — actualizando…</string>
+    <string name="log_keeper_closed">Keeper no está en ejecución — instalando e iniciando…</string>
+    <string name="log_keeper_writing">escribiendo keeper.jar (%1$d bytes)…</string>
+    <string name="log_keeper_running">Keeper en ejecución ✓ (versión %1$s)</string>
+    <string name="log_keeper_failed">Keeper no pudo iniciarse</string>
+    <string name="log_keeper_error">error de Keeper: %1$s</string>
+
+    <!-- ===== Camera names ===== -->
+    <string name="cam_front">Frontal</string>
+    <string name="cam_rear">Trasera</string>
+    <string name="cam_right">Derecha</string>
+    <string name="cam_left">Izquierda</string>
+    <string name="cam_dvr">DVR (externo)</string>
+
+    <!-- ===== Camera setup log (CameraEngine) ===== -->
+    <string name="ce_adb_already_open">conexión ADB ya abierta ✓</string>
+    <string name="ce_adb_already_listening">127.0.0.1:5555 ya está escuchando — conectado ✓</string>
+    <string name="ce_step1">PASO 1 — puerta trasera de TS Settings (propiedades de ADB inalámbrico)…</string>
+    <string name="ce_ts_bridge">puente TS: %1$s</string>
+    <string name="ce_step2">PASO 2 — servicio de prueba OTA: adb_enabled=1…</string>
+    <string name="ce_step3">PASO 3 — esperando a que adbd se active en TCP 5555 (4 s)…</string>
+    <string name="ce_connected">CONECTADO ✓</string>
+    <string name="ce_tls_fallback">No se pudo conectar — desactivando la depuración inalámbrica TLS y volviendo al modo clásico…</string>
+    <string name="ce_connected_classic">CONECTADO mediante el 5555 clásico ✓</string>
+    <string name="ce_connect_failed">NO SE PUDO CONECTAR. Comprueba: si apareció una ventana de aprobación RSA en la pantalla del vehículo, elige \"permitir siempre\" y vuelve a tocar PREPARAR VEHÍCULO.</string>
+    <string name="ce_adb_not_connected_install">ADB no conectado — no se puede instalar.</string>
+    <string name="ce_asset_current">%1$s actualizado (%2$d bytes, %3$s…) ✓</string>
+    <string name="ce_asset_writing">escribiendo %1$s (%2$d bytes)…</string>
+    <string name="ce_asset_verified">%1$s verificado ✓</string>
+    <string name="ce_asset_not_verified">%1$s NO SE PUDO VERIFICAR (hash no coincide)</string>
+    <string name="ce_asset_hash_failed">falló la verificación del hash de %1$s</string>
+    <string name="ce_adb_not_connected">ADB no conectado.</string>
+    <string name="ce_helpers_current">Procesos auxiliares en ejecución y actualizados (versión %1$d) — esperando la transmisión de las 4 cámaras…</string>
+    <string name="ce_helper_binary_changed">El binario auxiliar cambió (misma versión) — actualizando…</string>
+    <string name="ce_helper_diff_version">Auxiliar en una versión diferente (%1$d) — actualizando…</string>
+    <string name="ce_helpers_closed">Procesos auxiliares no están en ejecución — instalando e iniciando…</string>
+    <string name="ce_helpers_started">4 instancias de cámara iniciadas — esperando a que se abran (~10-30 s)…</string>
+    <string name="ce_helper_ready">Auxiliar listo ✓ (cámara %1$d transmitiendo, versión %2$d)</string>
+    <string name="ce_waiting_helper_log">esperando… registro del auxiliar: %1$s</string>
+    <string name="ce_frame_stream_failed">no se pudo verificar la transmisión de fotogramas (60 s)</string>
+    <string name="ce_frame_stream_not_started">La transmisión de fotogramas no se inició. Registro del auxiliar arriba.</string>
+    <string name="ce_adb_connecting">ADB no conectado — conectando…</string>
+    <string name="ce_adb_connect_failed_files">ADB no pudo conectar; los archivos permanecerán en el vehículo.</string>
+    <string name="ce_stopping_helpers">Deteniendo los procesos auxiliares…</string>
+    <string name="ce_deleting_files">Eliminando los archivos instalados…</string>
+    <string name="ce_remaining_files">Número de archivos relacionados restantes: %1$s</string>
+    <string name="ce_closing_adb">Desactivando el ADB inalámbrico…</string>
+    <string name="ce_cleanup_done">Limpieza completada ✓ — la app ya se puede desinstalar de forma segura.</string>
+
+    <!-- ===== Recorder (Mp4Recorder) ===== -->
+    <string name="rec_err_already_open">grabación ya abierta</string>
+    <string name="rec_err_mediastore">no se pudo crear el registro de MediaStore</string>
+    <string name="rec_err_mp4_open">no se pudo abrir el archivo MP4</string>
+    <string name="rec_recovered_count">%1$d grabación(es) recuperada(s)</string>
+    <string name="rec_unrecoverable_cleaned">%1$d irrecuperable(s) eliminada(s)</string>
+    <string name="log_cam_open_failed">la cámara %1$d no se pudo abrir para grabar: %2$s</string>
+    <string name="log_cam_segment_error">error de segmento de la cámara %1$d: %2$s</string>
+    <string name="rec_recovered_msg">%1$d grabación(es) recuperada(s)</string>
+    <string name="rec_recovered_dropped">%1$d grabación(es) recuperada(s), %2$d irrecuperable(s) eliminada(s)</string>
+    <string name="rec_err_no_sample">no hay muestra en el diario</string>
+</resources>

@@ -38,7 +38,7 @@ public final class CameraEngine {
     public static final int NV12_BYTES = OUT_W * OUT_H * 3 / 2;
     public static final int[] CAM_IDS = {0, 1, 2, 3, 5};
     // Etiketler araçta ölçüldü: indeks 2 = SAĞ gövde kamerası, indeks 3 = SOL
-    public static final String[] CAM_NAMES = {"Ön", "Arka", "Sağ", "Sol", "DVR (harici)"};
+    public static final String[] CAM_NAMES = {"Front", "Rear", "Right", "Left", "DVR (external)"};
 
     private final Context ctx;
     private final ResearchLab lab;
@@ -90,37 +90,37 @@ public final class CameraEngine {
      *  çalışan bağlantıyı kendimiz kırmayalım). */
     public boolean connectAdb(Step log) {
         if (lab.adb.connected()) {
-            log.run("ADB bağlantısı zaten açık ✓");
+            log.run(ctx.getString(R.string.ce_adb_already_open));
             return true;
         }
         if (tryConnect()) {
-            log.run("127.0.0.1:5555 zaten dinliyor — bağlanıldı ✓");
+            log.run(ctx.getString(R.string.ce_adb_already_listening));
             return true;
         }
 
-        log.run("ADIM 1 — TS Settings arka kapısı (kablosuz ADB property'leri)…");
+        log.run(ctx.getString(R.string.ce_step1));
         try {
             String r = TsPropBridge.enableWirelessAdb(ctx);
             log.run(r);
-        } catch (Exception e) { log.run("TS köprüsü: " + ScanEngine.error(e)); }
+        } catch (Exception e) { log.run(ctx.getString(R.string.ce_ts_bridge, ScanEngine.error(e))); }
 
         // NOT: y(31,99) KULLANILMAZ — adb_wifi_enabled=1 adbd'yi TLS moduna alır ve
         // klasik (TLS'siz) bağlantıyı engeller. Yalnız adb_enabled=1 gerekir.
-        log.run("ADIM 2 — OTA test servisi: adb_enabled=1…");
+        log.run(ctx.getString(R.string.ce_step2));
         try {
             String r1 = OtaTestCommand.call(ctx, svc -> OtaTestCommand.y(svc, 31, 77), 10000);
             log.run("y(31,77) → " + r1);
         } catch (Exception e) { log.run("OTA servisi: " + ScanEngine.error(e)); }
 
-        log.run("ADIM 3 — adbd'nin TCP 5555'e kalkması bekleniyor (4 sn)…");
+        log.run(ctx.getString(R.string.ce_step3));
         sleep(4000);
-        if (tryConnect()) { log.run("BAĞLANDI ✓"); return true; }
+        if (tryConnect()) { log.run(ctx.getString(R.string.ce_connected)); return true; }
 
-        log.run("Bağlanamadı — TLS kablosuz debug kapatılıp klasik moda dönülüyor…");
+        log.run(ctx.getString(R.string.ce_tls_fallback));
         closeTls(log);
-        if (tryConnect()) { log.run("Klasik 5555 ile BAĞLANDI ✓"); return true; }
+        if (tryConnect()) { log.run(ctx.getString(R.string.ce_connected_classic)); return true; }
 
-        log.run("BAĞLANAMADI. Kontrol: araç ekranında RSA onay penceresi çıktıysa 'her zaman izin ver'i seçin, sonra SİSTEMİ HAZIRLA'ya tekrar basın.");
+        log.run(ctx.getString(R.string.ce_connect_failed));
         return false;
     }
 
@@ -146,7 +146,7 @@ public final class CameraEngine {
 
     /** 2) Asset'lerdeki yardımcı dosyaları araca yaz (idempotent: boyut eşitse atlar). */
     public boolean installHelpers(Step log) throws Exception {
-        if (!lab.adb.connected()) { log.run("ADB bağlı değil — kurul yapılamaz."); return false; }
+        if (!lab.adb.connected()) { log.run(ctx.getString(R.string.ce_adb_not_connected_install)); return false; }
         String[] names = {"qcam_patched_c0", "qcam_patched_c1", "qcam_patched_c2", "qcam_patched_c3", "qcam_loop8", "qcarcam_config.xml"};
         boolean allOk = true;
         for (String name : names) allOk &= pushAsset(name, log);
@@ -162,10 +162,10 @@ public final class CameraEngine {
         JSONObject hash = lab.adb.shell("md5sum /data/local/tmp/" + name + " 2>/dev/null | cut -d' ' -f1", 8000);
         String remote = hash.optString("output", "").trim().toLowerCase(Locale.US);
         if (remote.length() == 32 && remote.equals(localMd5)) {
-            log.run(name + " güncel (" + data.length + " bayt, " + localMd5.substring(0, 8) + "…) ✓");
+            log.run(ctx.getString(R.string.ce_asset_current, name, data.length, localMd5.substring(0, 8)));
             return true;
         }
-        log.run(name + " yazılıyor (" + data.length + " bayt)…");
+        log.run(ctx.getString(R.string.ce_asset_writing, name, data.length));
         lab.adb.shell("rm -f /data/local/tmp/" + name, 8000);
         int chunk = 18 * 1024; // base64 sonrası ~24KB — adb shell komut sınırı içinde
         for (int off = 0; off < data.length; off += chunk) {
@@ -175,8 +175,8 @@ public final class CameraEngine {
         }
         JSONObject after = lab.adb.shell("md5sum /data/local/tmp/" + name + " 2>/dev/null | cut -d' ' -f1", 8000);
         boolean ok = after.optString("output", "").trim().toLowerCase(Locale.US).equals(localMd5);
-        log.run(name + (ok ? " doğrulandı ✓" : " DOĞRULANAMADI (karma uyuşmadı)"));
-        if (!ok) lastError = name + " karma doğrulaması başarısız";
+        log.run(ok ? ctx.getString(R.string.ce_asset_verified, name) : ctx.getString(R.string.ce_asset_not_verified, name));
+        if (!ok) lastError = ctx.getString(R.string.ce_asset_hash_failed, name);
         return ok;
     }
 
@@ -225,7 +225,7 @@ public final class CameraEngine {
     }
 
     public boolean startHelper(Step log, int cam) {
-        if (!lab.adb.connected()) { log.run("ADB bağlı değil."); return false; }
+        if (!lab.adb.connected()) { log.run(ctx.getString(R.string.ce_adb_not_connected)); return false; }
         try {
             int remote = remoteHelperVersion();
             boolean alive = helperRunning();
@@ -234,11 +234,11 @@ public final class CameraEngine {
             // düzeltilmişse) yenile. Yoksa MD5 farkı sessizce yutulurdu.
             boolean binCurrent = helpersBinaryCurrent();
             if (alive && remote == HELPER_VER && binCurrent) {
-                log.run("Yardımcılar güncel çalışıyor (sürüm " + remote + ") — 4 kamera akışı bekleniyor…");
+                log.run(ctx.getString(R.string.ce_helpers_current, remote));
             } else {
                 log.run(!binCurrent && alive && remote == HELPER_VER
-                        ? "Yardımcı binary'si değişmiş (sürüm aynı) — yenileniyor…"
-                        : (alive ? "Yardımcı farklı sürümde (" + remote + ") — yenileniyor…" : "Yardımcılar kapalı — kurulup başlatılıyor…"));
+                        ? ctx.getString(R.string.ce_helper_binary_changed)
+                        : (alive ? ctx.getString(R.string.ce_helper_diff_version, remote) : ctx.getString(R.string.ce_helpers_closed)));
                 lab.adb.shell("pkill qcam_loop8; pkill qcam_loop; pkill qcam_patched; sleep 1; rm -f /data/local/tmp/qcam_loop_*.pid /data/local/tmp/qcam_loop_*.ver /data/local/tmp/qcam_loop.pid /data/local/tmp/qcam_loop.ver; true", 10000);
                 installHelpers(log);
                 touchDemand();
@@ -250,7 +250,7 @@ public final class CameraEngine {
                     if (i < MULTI_CAMS.length - 1) launch.append(' ');
                 }
                 lab.adb.shell(launch.toString(), 8000);
-                log.run("4 kamera örneği başlatıldı — açılmaları bekleniyor (~10-30 sn)…");
+                log.run(ctx.getString(R.string.ce_helpers_started));
             }
             helperCam = cam;
             return waitFirstFrame(log, cam, 60_000);
@@ -301,19 +301,19 @@ public final class CameraEngine {
             touchDemand();
             byte[] f = nextFrameFor(cam, 1000);
             if (f != null) {
-                log.run("Yardımcı hazır ✓ (kamera " + cam + " akıyor, sürüm " + remoteHelperVersion() + ")");
+                log.run(ctx.getString(R.string.ce_helper_ready, cam, remoteHelperVersion()));
                 return true;
             }
             long now = System.currentTimeMillis();
             if (now - lastProgress > 12000) {
                 lastProgress = now;
                 JSONObject l = lab.adb.shell("tail -2 /data/local/tmp/qcam_loop.log 2>/dev/null", 6000);
-                log.run("bekliyor… yardımcı log: " + l.optString("output").trim().replace("\n", " | "));
+                log.run(ctx.getString(R.string.ce_waiting_helper_log, l.optString("output").trim().replace("\n", " | ")));
             }
             sleep(400);
         }
-        lastError = "kare akışı doğrulanamadı (60 sn)";
-        log.run("Kare akışı başlamadı. Yardımcı logu yukarıda.");
+        lastError = ctx.getString(R.string.ce_frame_stream_failed);
+        log.run(ctx.getString(R.string.ce_frame_stream_not_started));
         return false;
     }
 
@@ -342,23 +342,23 @@ public final class CameraEngine {
     public boolean uninstallPrep(Step log, boolean closeAdb) {
         try {
             if (!lab.adb.connected()) {
-                log.run("ADB bağlı değil — bağlanılıyor…");
+                log.run(ctx.getString(R.string.ce_adb_connecting));
                 tryConnectQuiet();
             }
-            if (!lab.adb.connected()) { log.run("ADB bağlanamadı; dosyalar araçta kalacak."); return false; }
-            log.run("Yardımcı süreçleri durduruluyor…");
+            if (!lab.adb.connected()) { log.run(ctx.getString(R.string.ce_adb_connect_failed_files)); return false; }
+            log.run(ctx.getString(R.string.ce_stopping_helpers));
             lab.adb.shell("kill $(cat /data/local/tmp/qcam_loop.pid) 2>/dev/null; pkill qcam_loop; pkill qcam_patched; sleep 1; true", 10000);
-            log.run("Kurulan dosyalar siliniyor…");
+            log.run(ctx.getString(R.string.ce_deleting_files));
             lab.adb.shell("cd /data/local/tmp && rm -f qcam_loop.pid qcam_loop.ver qcam_loop.log qcam_loop qcam_patched qcarcam_config.xml snap_*.raw frame_*.raw; true", 10000);
             JSONObject left = lab.adb.shell("ls /data/local/tmp/ | grep -cE 'qcam|snap' || true", 6000);
-            log.run("Kalan ilgili dosya sayısı: " + left.optString("output", "?").trim());
+            log.run(ctx.getString(R.string.ce_remaining_files, left.optString("output", "?").trim()));
             if (closeAdb) {
-                log.run("Kablosuz ADB kapatılıyor…");
+                log.run(ctx.getString(R.string.ce_closing_adb));
                 try { OtaTestCommand.call(ctx, svc -> OtaTestCommand.y(svc, 31, 66), 8000); } catch (Exception ignored) {}
                 try { TsPropBridge.setSingle(ctx, "sys.connect.adb.wiress", "0"); } catch (Exception ignored) {}
                 lab.adb.disconnect();
             }
-            log.run("Temizlik tamam ✓ — uygulama artık güvenle kaldırılabilir.");
+            log.run(ctx.getString(R.string.ce_cleanup_done));
             return true;
         } catch (Exception e) {
             lastError = ScanEngine.error(e);

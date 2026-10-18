@@ -48,7 +48,7 @@ public final class ParkCamService extends Service {
 
     // ---- Activity'nin okuduğu durum ----
     public static volatile boolean IS_RUNNING = false;
-    public static volatile String STATUS = "başlatılıyor…";
+    public static volatile String STATUS = null; /* set in onCreate via getString */
     public static volatile String VEHICLE = "?";      // "ACIK P1 0 km/h" gibi
     public static volatile String SERVICE_LOG = "";   // kurulum/temizlik günlüğü
     public static volatile boolean RECORDING = false;
@@ -85,13 +85,14 @@ public final class ParkCamService extends Service {
     @Override public void onCreate() {
         super.onCreate();
         IS_RUNNING = true;
+        if (STATUS == null) STATUS = getString(R.string.svc_status_starting);
         uiHandler = new Handler(Looper.getMainLooper());
 
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= 26) {
             nm.createNotificationChannel(new NotificationChannel(CHANNEL, "ParkCam", NotificationManager.IMPORTANCE_LOW));
         }
-        startForeground(1, buildNotification("Başlatılıyor…"));
+        startForeground(1, buildNotification(getString(R.string.svc_starting)));
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         cpuLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "parkcam:service");
@@ -106,13 +107,13 @@ public final class ParkCamService extends Service {
 
         running = true;
         cam = new CameraEngine(ResearchLab.get(this));
-        STATUS = "servis başladı";
+        STATUS = getString(R.string.svc_status_service_started);
 
         // Yarım kayıtları kurtar (araç uyurken kesilen son kayıt dahil) — arka planda
         new Thread(() -> {
             try {
                 String rec = Mp4Recorder.recoverPending(this);
-                if (rec != null && !rec.startsWith("0 kayıt")) log("kurtarma: " + rec);
+                if (rec != null) log(getString(R.string.log_recover, rec));
             } catch (Throwable ignored) {}
         }, "parkcam-recover").start();
 
@@ -138,20 +139,20 @@ public final class ParkCamService extends Service {
     @Override public int onStartCommand(Intent intent, int flags, int id) {
         String action = intent != null ? intent.getAction() : "";
         if ("setup".equals(action)) {
-            log("kurulum el ile tetiklendi");
+            log(getString(R.string.log_setup_manual));
             new Thread(this::bootstrap, "parkcam-setup").start();
         } else if ("cleanup".equals(action)) {
-            log("kaldırma hazırlığı başladı");
+            log(getString(R.string.log_cleanup_begin));
             new Thread(this::cleanupAll, "parkcam-cleanup").start();
         } else if ("stopRec".equals(action)) {
-            stopRecording("el ile durduruldu");
+            stopRecording(getString(R.string.reason_manual_stop));
         } else if ("recTest".equals(action)) {
             // 60 sn'lik deneme kaydı — aracı açmadan boru hattını doğrulamak için
-            log("DENEME KAYDI başlıyor (60 sn)");
-            startRecording("deneme");
+            log(getString(R.string.log_test_recording));
+            startRecording(getString(R.string.reason_test));
             new Thread(() -> {
                 try { Thread.sleep(60000); } catch (InterruptedException e) { return; }
-                stopRecording("deneme süresi doldu");
+                stopRecording(getString(R.string.reason_test_elapsed));
             }, "rec-test").start();
         }
         return START_STICKY;
@@ -166,23 +167,23 @@ public final class ParkCamService extends Service {
             attempt++;
             try {
                 CameraEngine.Step log = this::log;
-                if (attempt == 1) log("=== kurulum başlıyor ===");
+                if (attempt == 1) log(getString(R.string.log_setup_begin));
                 boolean adbOk = cam.connectAdb(log);
                 if (adbOk) {
                     deployKeeper(log);
                     boolean camOk = cam.startHelper(log, 0); // v8: 4 kamera örneği
                     if (camOk) {
-                        STATUS = "hazır";
-                        log("=== HAZIR ✓ (4 kamera, deneme " + attempt + ") ===");
+                        STATUS = getString(R.string.svc_status_ready);
+                        log(getString(R.string.log_ready, attempt));
                         return; // başarı — döngüden çık
                     }
-                    STATUS = "kamera açılamadı — tekrar denenecek";
+                    STATUS = getString(R.string.svc_status_camera_failed);
                 } else {
-                    STATUS = "ADB kapalı — tekrar denenecek";
+                    STATUS = getString(R.string.svc_status_adb_off);
                 }
             } catch (Exception e) {
-                STATUS = "hata: " + e.getMessage();
-                log("kurulum hatası (deneme " + attempt + "): " + e);
+                STATUS = getString(R.string.svc_status_error, String.valueOf(e.getMessage()));
+                log(getString(R.string.log_setup_error, attempt, String.valueOf(e)));
             }
             try { Thread.sleep(60000); } catch (InterruptedException e) { return; }
         }
@@ -191,12 +192,12 @@ public final class ParkCamService extends Service {
     /** Kaldırma hazırlığı: yardımcıları durdur, dosyaları temizle */
     private void cleanupAll() {
         try {
-            stopRecording("temizlik");
+            stopRecording(getString(R.string.reason_cleanup));
             cam.uninstallPrep(this::log, true);
-            STATUS = "temizlendi — uygulama kaldırılabilir";
-            log("=== temizlendi ===");
+            STATUS = getString(R.string.svc_status_cleaned);
+            log(getString(R.string.log_cleaned));
         } catch (Exception e) {
-            log("temizlik hatası: " + e);
+            log(getString(R.string.log_cleanup_error, String.valueOf(e)));
         }
         updateNotification(notifyText());
     }
@@ -233,14 +234,14 @@ public final class ParkCamService extends Service {
 
             // qcam ile aynı mantık: güncel sürüm CANLI çalışıyorsa dokunma.
             if (running && remoteVer == KEEPER_VER && jarCurrent) {
-                log.run("Keeper güncel çalışıyor ✓ (sürüm " + remoteVer + ")");
+                log.run(getString(R.string.log_keeper_current, remoteVer));
                 return;
             }
 
             // Buraya düştüysek: eski sürüm, ölü ya da jar değişmiş → öldür + yenile.
             log.run(running
-                ? "Keeper eski/uyumsuz (sürüm " + remoteVer + " ≠ " + KEEPER_VER + ") — yenileniyor…"
-                : "Keeper kapalı — kurulup başlatılıyor…");
+                ? getString(R.string.log_keeper_refresh, remoteVer, KEEPER_VER)
+                : getString(R.string.log_keeper_closed));
 
             // 1) Çalışan (eski) keeper'ı kesin öldür.
             //    ÖNEMLİ: app_process64 ile başlatılan süreçte /proc/pid/comm "main",
@@ -255,7 +256,7 @@ public final class ParkCamService extends Service {
 
             // 2) Jar değiştiyse yeniden yaz.
             if (!jarCurrent) {
-                log.run("keeper.jar yazılıyor (" + jarData.length + " bayt)…");
+                log.run(getString(R.string.log_keeper_writing, jarData.length));
                 lab.adb.shell("rm -f /data/local/tmp/keeper.jar", 5000);
                 String b64 = android.util.Base64.encodeToString(jarData, android.util.Base64.NO_WRAP);
                 for (int off = 0; off < b64.length(); off += 18000) {
@@ -281,10 +282,10 @@ public final class ParkCamService extends Service {
                 newVer = Integer.parseInt(nv.optString("output", "-1").trim());
             } catch (Exception ignored) {}
             log.run(cnt > 0
-                ? "Keeper çalışıyor ✓ (sürüm " + (newVer > 0 ? newVer : "?") + ")"
-                : "Keeper başlatılamadı");
+                ? getString(R.string.log_keeper_running, (newVer > 0 ? String.valueOf(newVer) : "?"))
+                : getString(R.string.log_keeper_failed));
         } catch (Exception e) {
-            log.run("Keeper hatası: " + e.getMessage());
+            log.run(getString(R.string.log_keeper_error, String.valueOf(e.getMessage())));
         }
     }
 
@@ -426,11 +427,11 @@ public final class ParkCamService extends Service {
                     if (marker.isFile() && marker.lastModified() != lastMarkerMs) {
                         lastMarkerMs = marker.lastModified();
                         marker.delete();
-                        log("DENEME KAYDI tetiklendi (60 sn)");
-                        startRecording("deneme (dosya tetikleyici)");
+                        log(getString(R.string.log_test_recording));
+                        startRecording(getString(R.string.reason_test_file_trigger));
                         new Thread(() -> {
                             try { Thread.sleep(60000); } catch (InterruptedException e) { return; }
-                            stopRecording("deneme süresi doldu");
+                            stopRecording(getString(R.string.reason_test_elapsed));
                         }, "rec-test").start();
                     }
                 } catch (Throwable ignored) {}
@@ -439,14 +440,14 @@ public final class ParkCamService extends Service {
                 boolean open = "ACIK".equals(aracDurum);
                 if (open) {
                     closedSinceMs = 0;
-                    if (!RECORDING) startRecording("araç açıldı");
+                    if (!RECORDING) startRecording(getString(R.string.reason_vehicle_on));
                 } else if ("KAPALI".equals(aracDurum)) {
                     if (RECORDING) {
                         if (closedSinceMs == 0) {
                             closedSinceMs = System.currentTimeMillis();
-                            log("araç kapandı — kayıt " + (TAIL_MS / 60000) + " dk daha sürer");
+                            log(getString(R.string.log_vehicle_off_tail, TAIL_MS/60000));
                         } else if (System.currentTimeMillis() - closedSinceMs >= TAIL_MS) {
-                            stopRecording("araç kapalı +2 dk doldu");
+                            stopRecording(getString(R.string.reason_vehicle_off_tail, TAIL_MS/60000));
                         }
                     }
                 }
@@ -488,9 +489,9 @@ public final class ParkCamService extends Service {
         closedSinceMs = 0;
         try {
             int freed = Mp4Recorder.ensureFreeSpace(this, MIN_FREE);
-            if (freed > 0) log(freed + " eski kayıt silindi (≥20 GB)");
+            if (freed > 0) log(getString(R.string.log_old_rec_deleted, freed));
             String recov = Mp4Recorder.recoverPending(this);
-            if (recov != null && !recov.startsWith("0 kayıt")) log("kurtarıldı: " + recov);
+            if (recov != null) log(getString(R.string.log_recovered, recov));
 
             int opened = 0;
             for (int i = 0; i < 4; i++) {
@@ -500,16 +501,16 @@ public final class ParkCamService extends Service {
                     segStart[i] = System.currentTimeMillis();
                     opened++;
                 } catch (Exception e) {
-                    log("kamera " + i + " kaydı açılamadı: " + e);
+                    log(getString(R.string.log_cam_open_failed, i, String.valueOf(e)));
                     recorders[i] = null;
                 }
             }
             RECORDING = opened > 0;
             REC_START_MS = System.currentTimeMillis();
-            REC_FILE = opened + " kamera";
-            log("KAYIT BAŞLADI (" + reason + ") — " + opened + "/4 kamera");
+            REC_FILE = opened + " cam";
+            log(getString(R.string.log_rec_started, reason, opened));
         } catch (Exception e) {
-            log("kayıt başlatılamadı: " + e);
+            log(getString(R.string.rec_err_mp4_open) + ": " + e);
         }
         updateNotification(notifyText());
     }
@@ -525,7 +526,7 @@ public final class ParkCamService extends Service {
                 recorders[i] = null;
             }
         }
-        log("KAYIT DURDU (" + reason + ") — toplam " + frames + " kare");
+        log(getString(R.string.log_rec_stopped, reason, frames));
         REC_FILE = "";
         updateNotification(notifyText());
     }
@@ -541,7 +542,7 @@ public final class ParkCamService extends Service {
             recorders[i].start(this);
             segStart[i] = now;
         } catch (Exception e) {
-            log("kamera " + i + " segment hatası: " + e);
+            log(getString(R.string.log_cam_segment_error, i, String.valueOf(e)));
             recorders[i] = null;
         }
     }
@@ -747,7 +748,7 @@ public final class ParkCamService extends Service {
     @Override public void onDestroy() {
         running = false;
         IS_RUNNING = false;
-        if (RECORDING) stopRecording("servis kapanıyor");
+        if (RECORDING) stopRecording(getString(R.string.reason_cleanup));
         if (heartbeat != null) heartbeat.interrupt();
         if (cpuLock != null && cpuLock.isHeld()) cpuLock.release();
         if (wifiLock != null && wifiLock.isHeld()) wifiLock.release();

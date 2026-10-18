@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ParkCam</string>
+
+    <!-- ===== Navigation / menu ===== -->
+    <string name="menu_home">🏠  Ana Sayfa</string>
+    <string name="menu_live_camera">📷  Canlı Kamera</string>
+    <string name="menu_settings">⚙  Ayarlar</string>
+    <string name="menu_prepare_vehicle">★  Aracı Hazırla</string>
+    <string name="menu_prepare_removal">✕  Kaldırmaya Hazırla</string>
+
+    <!-- ===== Home page ===== -->
+    <string name="section_status">Durum</string>
+    <string name="section_event_log">Kurulum / Olay Günlüğü</string>
+    <string name="section_live_camera">Canlı Kamera</string>
+    <string name="label_live_camera">Canlı kamera: </string>
+    <string name="home_hint">Kayıtlar Movies/DiLinkCam altına yazılır. Araç açılınca kayıt otomatik başlar, kapandıktan 2 dakika sonra durur.</string>
+    <string name="live_hint">AYNI ANDA 4 KAMERA: araç açıkken dördü aynı anda kayda alınır (Movies/DiLinkCam). Burada seçtiğiniz kamera canlı izlemede gösterilir.</string>
+
+    <!-- status / vehicle / recording lines -->
+    <string name="status_prefix">durum: </string>
+    <string name="status_checking">durum: kontrol ediliyor…</string>
+    <string name="status_waiting_service">durum: servis bekleniyor…</string>
+    <string name="vehicle_prefix">araç: </string>
+    <string name="vehicle_unknown">araç: ?</string>
+    <string name="rec_off">kayıt: kapalı</string>
+    <string name="rec_recording">kayıt: ● KAYITTA %1$02d:%2$02d • %3$s</string>
+    <string name="live_off">canlı: kapalı</string>
+    <string name="live_waiting">canlı: bekleniyor…</string>
+    <string name="live_running">canlı: kamera %1$d • %2$dx%3$d</string>
+
+    <!-- live button -->
+    <string name="btn_live_start">▶ CANLI YAYINI AÇ</string>
+    <string name="btn_live_stop">■ YAYINI DURDUR</string>
+
+    <!-- toasts -->
+    <string name="toast_setup_started">Kurulum başladı — günlüğü ana sayfada izleyin</string>
+    <string name="toast_cleanup_started">Temizlik başladı — günlüğü ana sayfada izleyin</string>
+    <string name="toast_send_failed">Gönderilemedi: %1$s</string>
+
+    <!-- removal dialog -->
+    <string name="dlg_removal_title">Kaldırma hazırlığı</string>
+    <string name="dlg_removal_message">Yardımcı süreçler durdurulur, /data/local/tmp dosyaları silinir ve kablosuz ADB kapatılır. Uygulamayı kaldırmadan önce kullanın. (Kayıtlarınız Movies/DiLinkCam\'de kalır.)</string>
+    <string name="dlg_cancel">Vazgeç</string>
+    <string name="dlg_clean">Temizle</string>
+
+    <!-- ===== Service: notification / status ===== -->
+    <string name="svc_starting">Başlatılıyor…</string>
+    <string name="svc_status_starting">başlatılıyor…</string>
+    <string name="svc_status_service_started">servis başladı</string>
+    <string name="svc_status_ready">hazır</string>
+    <string name="svc_status_camera_failed">kamera açılamadı — tekrar denenecek</string>
+    <string name="svc_status_adb_off">ADB kapalı — tekrar denenecek</string>
+    <string name="svc_status_error">hata: %1$s</string>
+    <string name="svc_status_cleaned">temizlendi — uygulama kaldırılabilir</string>
+
+    <!-- service log messages -->
+    <string name="log_setup_begin">=== kurulum başlıyor ===</string>
+    <string name="log_ready">=== HAZIR ✓ (4 kamera, deneme %1$d) ===</string>
+    <string name="log_setup_error">kurulum hatası (deneme %1$d): %2$s</string>
+    <string name="log_setup_manual">kurulum el ile tetiklendi</string>
+    <string name="log_cleanup_begin">kaldırma hazırlığı başladı</string>
+    <string name="log_cleaned">=== temizlendi ===</string>
+    <string name="log_cleanup_error">temizlik hatası: %1$s</string>
+    <string name="log_recover">kurtarma: %1$s</string>
+    <string name="log_test_recording">DENEME KAYDI tetiklendi (60 sn)</string>
+    <string name="log_rec_started">KAYIT BAŞLADI (%1$s) — %2$d/4 kamera</string>
+    <string name="log_rec_stopped">KAYIT DURDU (%1$s) — toplam %2$d kare</string>
+    <string name="log_old_rec_deleted">%1$d eski kayıt silindi (≥20 GB)</string>
+    <string name="log_recovered">kurtarıldı: %1$s</string>
+
+    <!-- recording reasons -->
+    <string name="reason_vehicle_on">araç açıldı</string>
+    <string name="reason_test">deneme</string>
+    <string name="reason_test_file_trigger">deneme (dosya tetikleyici)</string>
+    <string name="reason_manual_stop">el ile durduruldu</string>
+    <string name="reason_test_elapsed">deneme süresi doldu</string>
+    <string name="reason_cleanup">temizlik</string>
+    <string name="reason_vehicle_off_tail">araç kapalı +%1$d dk doldu</string>
+    <string name="log_vehicle_off_tail">araç kapandı — kayıt %1$d dk daha sürer</string>
+
+    <!-- keeper -->
+    <string name="log_keeper_current">Keeper güncel çalışıyor ✓ (sürüm %1$d)</string>
+    <string name="log_keeper_refresh">Keeper eski/uyumsuz (sürüm %1$d ≠ %2$d) — yenileniyor…</string>
+    <string name="log_keeper_closed">Keeper kapalı — kurulup başlatılıyor…</string>
+    <string name="log_keeper_writing">keeper.jar yazılıyor (%1$d bayt)…</string>
+    <string name="log_keeper_running">Keeper çalışıyor ✓ (sürüm %1$s)</string>
+    <string name="log_keeper_failed">Keeper başlatılamadı</string>
+    <string name="log_keeper_error">Keeper hatası: %1$s</string>
+
+    <!-- ===== Camera names ===== -->
+    <string name="cam_front">Ön</string>
+    <string name="cam_rear">Arka</string>
+    <string name="cam_right">Sağ</string>
+    <string name="cam_left">Sol</string>
+    <string name="cam_dvr">DVR (harici)</string>
+
+    <!-- ===== Camera setup log (CameraEngine) ===== -->
+    <string name="ce_adb_already_open">ADB bağlantısı zaten açık ✓</string>
+    <string name="ce_adb_already_listening">127.0.0.1:5555 zaten dinliyor — bağlanıldı ✓</string>
+    <string name="ce_step1">ADIM 1 — TS Settings arka kapısı (kablosuz ADB property\'leri)…</string>
+    <string name="ce_ts_bridge">TS köprüsü: %1$s</string>
+    <string name="ce_step2">ADIM 2 — OTA test servisi: adb_enabled=1…</string>
+    <string name="ce_step3">ADIM 3 — adbd\'nin TCP 5555\'e kalkması bekleniyor (4 sn)…</string>
+    <string name="ce_connected">BAĞLANDI ✓</string>
+    <string name="ce_tls_fallback">Bağlanamadı — TLS kablosuz debug kapatılıp klasik moda dönülüyor…</string>
+    <string name="ce_connected_classic">Klasik 5555 ile BAĞLANDI ✓</string>
+    <string name="ce_connect_failed">BAĞLANAMADI. Kontrol: araç ekranında RSA onay penceresi çıktıysa \"her zaman izin ver\"i seçin, sonra ARACI HAZIRLA\'ya tekrar basın.</string>
+    <string name="ce_adb_not_connected_install">ADB bağlı değil — kurulum yapılamaz.</string>
+    <string name="ce_asset_current">%1$s güncel (%2$d bayt, %3$s…) ✓</string>
+    <string name="ce_asset_writing">%1$s yazılıyor (%2$d bayt)…</string>
+    <string name="ce_asset_verified">%1$s doğrulandı ✓</string>
+    <string name="ce_asset_not_verified">%1$s DOĞRULANAMADI (karma uyuşmadı)</string>
+    <string name="ce_asset_hash_failed">%1$s karma doğrulaması başarısız</string>
+    <string name="ce_adb_not_connected">ADB bağlı değil.</string>
+    <string name="ce_helpers_current">Yardımcılar güncel çalışıyor (sürüm %1$d) — 4 kamera akışı bekleniyor…</string>
+    <string name="ce_helper_binary_changed">Yardımcı binary\'si değişmiş (sürüm aynı) — yenileniyor…</string>
+    <string name="ce_helper_diff_version">Yardımcı farklı sürümde (%1$d) — yenileniyor…</string>
+    <string name="ce_helpers_closed">Yardımcılar kapalı — kurulup başlatılıyor…</string>
+    <string name="ce_helpers_started">4 kamera örneği başlatıldı — açılmaları bekleniyor (~10-30 sn)…</string>
+    <string name="ce_helper_ready">Yardımcı hazır ✓ (kamera %1$d akıyor, sürüm %2$d)</string>
+    <string name="ce_waiting_helper_log">bekliyor… yardımcı log: %1$s</string>
+    <string name="ce_frame_stream_failed">kare akışı doğrulanamadı (60 sn)</string>
+    <string name="ce_frame_stream_not_started">Kare akışı başlamadı. Yardımcı logu yukarıda.</string>
+    <string name="ce_adb_connecting">ADB bağlı değil — bağlanılıyor…</string>
+    <string name="ce_adb_connect_failed_files">ADB bağlanamadı; dosyalar araçta kalacak.</string>
+    <string name="ce_stopping_helpers">Yardımcı süreçleri durduruluyor…</string>
+    <string name="ce_deleting_files">Kurulan dosyalar siliniyor…</string>
+    <string name="ce_remaining_files">Kalan ilgili dosya sayısı: %1$s</string>
+    <string name="ce_closing_adb">Kablosuz ADB kapatılıyor…</string>
+    <string name="ce_cleanup_done">Temizlik tamam ✓ — uygulama artık güvenle kaldırılabilir.</string>
+
+    <!-- ===== Recorder (Mp4Recorder) ===== -->
+    <string name="rec_err_already_open">kayıt zaten açık</string>
+    <string name="rec_err_mediastore">MediaStore kaydı oluşturulamadı</string>
+    <string name="rec_err_mp4_open">MP4 dosyası açılamadı</string>
+    <string name="rec_recovered_count">%1$d kayıt kurtarıldı</string>
+    <string name="rec_unrecoverable_cleaned">%1$d kurtarılamayan temizlendi</string>
+    <string name="log_cam_open_failed">kamera %1$d kaydı açılamadı: %2$s</string>
+    <string name="log_cam_segment_error">kamera %1$d segment hatası: %2$s</string>
+    <string name="rec_recovered_msg">%1$d kayıt kurtarıldı</string>
+    <string name="rec_recovered_dropped">%1$d kayıt kurtarıldı, %2$d kurtarılamayan temizlendi</string>
+    <string name="rec_err_no_sample">günlükte örnek yok</string>
+</resources>

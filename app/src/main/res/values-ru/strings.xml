@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ParkCam</string>
+
+    <!-- ===== Navigation / menu ===== -->
+    <string name="menu_home">🏠  Главная</string>
+    <string name="menu_live_camera">📷  Камера в реальном времени</string>
+    <string name="menu_settings">⚙  Настройки</string>
+    <string name="menu_prepare_vehicle">★  Подготовить автомобиль</string>
+    <string name="menu_prepare_removal">✕  Подготовить к удалению</string>
+
+    <!-- ===== Home page ===== -->
+    <string name="section_status">Статус</string>
+    <string name="section_event_log">Настройка / журнал событий</string>
+    <string name="section_live_camera">Камера в реальном времени</string>
+    <string name="label_live_camera">Камера в реальном времени: </string>
+    <string name="home_hint">Записи сохраняются в Movies/DiLinkCam. Запись начинается автоматически при включении автомобиля и останавливается через 2 минуты после выключения.</string>
+    <string name="live_hint">ВСЕ 4 КАМЕРЫ СРАЗУ: когда автомобиль включён, все четыре записываются одновременно (Movies/DiLinkCam). Выбранная здесь камера показывается в режиме реального времени.</string>
+
+    <!-- status / vehicle / recording lines (prefix + dynamic value) -->
+    <string name="status_prefix">статус: </string>
+    <string name="status_checking">статус: проверка…</string>
+    <string name="status_waiting_service">статус: ожидание службы…</string>
+    <string name="vehicle_prefix">автомобиль: </string>
+    <string name="vehicle_unknown">автомобиль: ?</string>
+    <string name="rec_off">запись: выкл.</string>
+    <string name="rec_recording">запись: ● ИДЁТ ЗАПИСЬ %1$02d:%2$02d • %3$s</string>
+    <string name="live_off">трансляция: выкл.</string>
+    <string name="live_waiting">трансляция: ожидание…</string>
+    <string name="live_running">трансляция: камера %1$d • %2$dx%3$d</string>
+
+    <!-- live button -->
+    <string name="btn_live_start">▶ НАЧАТЬ ТРАНСЛЯЦИЮ</string>
+    <string name="btn_live_stop">■ ОСТАНОВИТЬ ТРАНСЛЯЦИЮ</string>
+
+    <!-- toasts -->
+    <string name="toast_setup_started">Настройка запущена — следите за журналом на главной странице</string>
+    <string name="toast_cleanup_started">Очистка запущена — следите за журналом на главной странице</string>
+    <string name="toast_send_failed">Не удалось отправить: %1$s</string>
+
+    <!-- removal dialog -->
+    <string name="dlg_removal_title">Подготовка к удалению</string>
+    <string name="dlg_removal_message">Вспомогательные процессы останавливаются, файлы в /data/local/tmp удаляются, а беспроводной ADB отключается. Используйте это перед удалением приложения. (Ваши записи останутся в Movies/DiLinkCam.)</string>
+    <string name="dlg_cancel">Отмена</string>
+    <string name="dlg_clean">Очистить</string>
+
+    <!-- ===== Service: notification / status ===== -->
+    <string name="svc_starting">Запуск…</string>
+    <string name="svc_status_starting">запуск…</string>
+    <string name="svc_status_service_started">служба запущена</string>
+    <string name="svc_status_ready">готово</string>
+    <string name="svc_status_camera_failed">не удалось открыть камеру — повторная попытка</string>
+    <string name="svc_status_adb_off">ADB отключён — повторная попытка</string>
+    <string name="svc_status_error">ошибка: %1$s</string>
+    <string name="svc_status_cleaned">очистка завершена — приложение можно удалить</string>
+
+    <!-- service log messages -->
+    <string name="log_setup_begin">=== начало настройки ===</string>
+    <string name="log_ready">=== ГОТОВО ✓ (4 камеры, попытка %1$d) ===</string>
+    <string name="log_setup_error">ошибка настройки (попытка %1$d): %2$s</string>
+    <string name="log_setup_manual">настройка запущена вручную</string>
+    <string name="log_cleanup_begin">начата подготовка к удалению</string>
+    <string name="log_cleaned">=== очистка завершена ===</string>
+    <string name="log_cleanup_error">ошибка очистки: %1$s</string>
+    <string name="log_recover">восстановление: %1$s</string>
+    <string name="log_test_recording">ЗАПУЩЕНА ТЕСТОВАЯ ЗАПИСЬ (60 с)</string>
+    <string name="log_rec_started">ЗАПИСЬ НАЧАТА (%1$s) — %2$d/4 камеры</string>
+    <string name="log_rec_stopped">ЗАПИСЬ ОСТАНОВЛЕНА (%1$s) — всего кадров: %2$d</string>
+    <string name="log_old_rec_deleted">Удалено старых записей: %1$d (≥20 ГБ)</string>
+    <string name="log_recovered">восстановлено: %1$s</string>
+
+    <!-- recording reasons -->
+    <string name="reason_vehicle_on">автомобиль включён</string>
+    <string name="reason_test">тест</string>
+    <string name="reason_test_file_trigger">тест (запуск по файлу)</string>
+    <string name="reason_manual_stop">остановлено вручную</string>
+    <string name="reason_test_elapsed">время теста истекло</string>
+    <string name="reason_cleanup">очистка</string>
+    <string name="reason_vehicle_off_tail">автомобиль выключен, прошло +%1$d мин</string>
+    <string name="log_vehicle_off_tail">автомобиль выключен — запись продолжается ещё %1$d мин</string>
+
+    <!-- keeper -->
+    <string name="log_keeper_current">Keeper работает и актуален ✓ (версия %1$d)</string>
+    <string name="log_keeper_refresh">Keeper устарел/несовместим (версия %1$d ≠ %2$d) — обновление…</string>
+    <string name="log_keeper_closed">Keeper не запущен — установка и запуск…</string>
+    <string name="log_keeper_writing">запись keeper.jar (%1$d байт)…</string>
+    <string name="log_keeper_running">Keeper работает ✓ (версия %1$s)</string>
+    <string name="log_keeper_failed">Не удалось запустить Keeper</string>
+    <string name="log_keeper_error">Ошибка Keeper: %1$s</string>
+
+    <!-- ===== Camera names ===== -->
+    <string name="cam_front">Передняя</string>
+    <string name="cam_rear">Задняя</string>
+    <string name="cam_right">Правая</string>
+    <string name="cam_left">Левая</string>
+    <string name="cam_dvr">DVR (внешняя)</string>
+
+    <!-- ===== Camera setup log (CameraEngine) ===== -->
+    <string name="ce_adb_already_open">ADB-соединение уже открыто ✓</string>
+    <string name="ce_adb_already_listening">127.0.0.1:5555 уже прослушивается — подключено ✓</string>
+    <string name="ce_step1">ШАГ 1 — обходной путь TS Settings (свойства беспроводного ADB)…</string>
+    <string name="ce_ts_bridge">Мост TS: %1$s</string>
+    <string name="ce_step2">ШАГ 2 — тестовая служба OTA: adb_enabled=1…</string>
+    <string name="ce_step3">ШАГ 3 — ожидание запуска adbd на TCP 5555 (4 с)…</string>
+    <string name="ce_connected">ПОДКЛЮЧЕНО ✓</string>
+    <string name="ce_tls_fallback">Не удалось подключиться — отключение беспроводной отладки TLS и переход в классический режим…</string>
+    <string name="ce_connected_classic">ПОДКЛЮЧЕНО через классический 5555 ✓</string>
+    <string name="ce_connect_failed">НЕ УДАЛОСЬ ПОДКЛЮЧИТЬСЯ. Проверьте: если на экране автомобиля появилось окно подтверждения RSA, выберите \"всегда разрешать\", затем снова нажмите ПОДГОТОВИТЬ АВТОМОБИЛЬ.</string>
+    <string name="ce_adb_not_connected_install">ADB не подключён — установка невозможна.</string>
+    <string name="ce_asset_current">%1$s актуален (%2$d байт, %3$s…) ✓</string>
+    <string name="ce_asset_writing">запись %1$s (%2$d байт)…</string>
+    <string name="ce_asset_verified">%1$s проверен ✓</string>
+    <string name="ce_asset_not_verified">%1$s НЕ УДАЛОСЬ ПРОВЕРИТЬ (несовпадение hash)</string>
+    <string name="ce_asset_hash_failed">%1$s не удалось проверить hash</string>
+    <string name="ce_adb_not_connected">ADB не подключён.</string>
+    <string name="ce_helpers_current">Вспомогательные процессы работают и актуальны (версия %1$d) — ожидание потока с 4 камер…</string>
+    <string name="ce_helper_binary_changed">Бинарный файл помощника изменён (та же версия) — обновление…</string>
+    <string name="ce_helper_diff_version">Помощник другой версии (%1$d) — обновление…</string>
+    <string name="ce_helpers_closed">Вспомогательные процессы не запущены — установка и запуск…</string>
+    <string name="ce_helpers_started">Запущено 4 экземпляра камер — ожидание их открытия (~10-30 с)…</string>
+    <string name="ce_helper_ready">Помощник готов ✓ (камера %1$d передаёт поток, версия %2$d)</string>
+    <string name="ce_waiting_helper_log">ожидание… журнал помощника: %1$s</string>
+    <string name="ce_frame_stream_failed">не удалось проверить поток кадров (60 с)</string>
+    <string name="ce_frame_stream_not_started">Поток кадров не запустился. Журнал помощника выше.</string>
+    <string name="ce_adb_connecting">ADB не подключён — подключение…</string>
+    <string name="ce_adb_connect_failed_files">ADB не удалось подключиться; файлы останутся на автомобиле.</string>
+    <string name="ce_stopping_helpers">Остановка вспомогательных процессов…</string>
+    <string name="ce_deleting_files">Удаление установленных файлов…</string>
+    <string name="ce_remaining_files">Количество оставшихся связанных файлов: %1$s</string>
+    <string name="ce_closing_adb">Отключение беспроводного ADB…</string>
+    <string name="ce_cleanup_done">Очистка завершена ✓ — приложение теперь можно безопасно удалить.</string>
+
+    <!-- ===== Recorder (Mp4Recorder) ===== -->
+    <string name="rec_err_already_open">запись уже открыта</string>
+    <string name="rec_err_mediastore">не удалось создать запись MediaStore</string>
+    <string name="rec_err_mp4_open">не удалось открыть файл MP4</string>
+    <string name="rec_recovered_count">Восстановлено записей: %1$d</string>
+    <string name="rec_unrecoverable_cleaned">Удалено невосстановимых: %1$d</string>
+    <string name="log_cam_open_failed">не удалось открыть камеру %1$d для записи: %2$s</string>
+    <string name="log_cam_segment_error">ошибка сегмента камеры %1$d: %2$s</string>
+    <string name="rec_recovered_msg">Восстановлено записей: %1$d</string>
+    <string name="rec_recovered_dropped">Восстановлено записей: %1$d, удалено невосстановимых: %2$d</string>
+    <string name="rec_err_no_sample">нет сэмпла в журнале</string>
+</resources>

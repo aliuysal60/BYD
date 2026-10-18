@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ParkCam</string>
+
+    <!-- ===== Navigation / menu ===== -->
+    <string name="menu_home">🏠  Accueil</string>
+    <string name="menu_live_camera">📷  Caméra en direct</string>
+    <string name="menu_settings">⚙  Paramètres</string>
+    <string name="menu_prepare_vehicle">★  Préparer le véhicule</string>
+    <string name="menu_prepare_removal">✕  Préparer la désinstallation</string>
+
+    <!-- ===== Home page ===== -->
+    <string name="section_status">État</string>
+    <string name="section_event_log">Journal de configuration / événements</string>
+    <string name="section_live_camera">Caméra en direct</string>
+    <string name="label_live_camera">Caméra en direct : </string>
+    <string name="home_hint">Les enregistrements sont stockés dans Movies/DiLinkCam. L\'enregistrement démarre automatiquement au démarrage du véhicule et s\'arrête 2 minutes après son extinction.</string>
+    <string name="live_hint">LES 4 CAMÉRAS À LA FOIS : lorsque le véhicule est allumé, les quatre sont enregistrées simultanément (Movies/DiLinkCam). La caméra sélectionnée ici est affichée en direct.</string>
+
+    <!-- status / vehicle / recording lines (prefix + dynamic value) -->
+    <string name="status_prefix">état : </string>
+    <string name="status_checking">état : vérification…</string>
+    <string name="status_waiting_service">état : en attente du service…</string>
+    <string name="vehicle_prefix">véhicule : </string>
+    <string name="vehicle_unknown">véhicule : ?</string>
+    <string name="rec_off">enregistrement : arrêté</string>
+    <string name="rec_recording">enregistrement : ● ENREGISTREMENT %1$02d:%2$02d • %3$s</string>
+    <string name="live_off">direct : arrêté</string>
+    <string name="live_waiting">direct : en attente…</string>
+    <string name="live_running">direct : caméra %1$d • %2$dx%3$d</string>
+
+    <!-- live button -->
+    <string name="btn_live_start">▶ DÉMARRER LE FLUX EN DIRECT</string>
+    <string name="btn_live_stop">■ ARRÊTER LE FLUX</string>
+
+    <!-- toasts -->
+    <string name="toast_setup_started">Configuration lancée — suivez le journal sur la page d\'accueil</string>
+    <string name="toast_cleanup_started">Nettoyage lancé — suivez le journal sur la page d\'accueil</string>
+    <string name="toast_send_failed">Envoi impossible : %1$s</string>
+
+    <!-- removal dialog -->
+    <string name="dlg_removal_title">Préparer la désinstallation</string>
+    <string name="dlg_removal_message">Les processus d\'assistance sont arrêtés, les fichiers sous /data/local/tmp sont supprimés et l\'ADB sans fil est désactivé. Utilisez cette option avant de désinstaller l\'application. (Vos enregistrements restent dans Movies/DiLinkCam.)</string>
+    <string name="dlg_cancel">Annuler</string>
+    <string name="dlg_clean">Nettoyer</string>
+
+    <!-- ===== Service: notification / status ===== -->
+    <string name="svc_starting">Démarrage…</string>
+    <string name="svc_status_starting">démarrage…</string>
+    <string name="svc_status_service_started">service démarré</string>
+    <string name="svc_status_ready">prêt</string>
+    <string name="svc_status_camera_failed">impossible d\'ouvrir la caméra — nouvelle tentative</string>
+    <string name="svc_status_adb_off">ADB désactivé — nouvelle tentative</string>
+    <string name="svc_status_error">erreur : %1$s</string>
+    <string name="svc_status_cleaned">nettoyé — l\'application peut être supprimée</string>
+
+    <!-- service log messages -->
+    <string name="log_setup_begin">=== démarrage de la configuration ===</string>
+    <string name="log_ready">=== PRÊT ✓ (4 caméras, tentative %1$d) ===</string>
+    <string name="log_setup_error">erreur de configuration (tentative %1$d) : %2$s</string>
+    <string name="log_setup_manual">configuration déclenchée manuellement</string>
+    <string name="log_cleanup_begin">préparation de la désinstallation lancée</string>
+    <string name="log_cleaned">=== nettoyé ===</string>
+    <string name="log_cleanup_error">erreur de nettoyage : %1$s</string>
+    <string name="log_recover">récupération : %1$s</string>
+    <string name="log_test_recording">ENREGISTREMENT DE TEST déclenché (60 s)</string>
+    <string name="log_rec_started">ENREGISTREMENT DÉMARRÉ (%1$s) — %2$d/4 caméras</string>
+    <string name="log_rec_stopped">ENREGISTREMENT ARRÊTÉ (%1$s) — %2$d images au total</string>
+    <string name="log_old_rec_deleted">%1$d ancien(s) enregistrement(s) supprimé(s) (≥20 Go)</string>
+    <string name="log_recovered">récupéré : %1$s</string>
+
+    <!-- recording reasons -->
+    <string name="reason_vehicle_on">véhicule allumé</string>
+    <string name="reason_test">test</string>
+    <string name="reason_test_file_trigger">test (déclencheur par fichier)</string>
+    <string name="reason_manual_stop">arrêté manuellement</string>
+    <string name="reason_test_elapsed">durée du test écoulée</string>
+    <string name="reason_cleanup">nettoyage</string>
+    <string name="reason_vehicle_off_tail">véhicule éteint +%1$d min écoulées</string>
+    <string name="log_vehicle_off_tail">véhicule éteint — l\'enregistrement se poursuit encore %1$d min</string>
+
+    <!-- keeper -->
+    <string name="log_keeper_current">Keeper en cours d\'exécution et à jour ✓ (version %1$d)</string>
+    <string name="log_keeper_refresh">Keeper ancien/incompatible (version %1$d ≠ %2$d) — actualisation…</string>
+    <string name="log_keeper_closed">Keeper arrêté — installation et démarrage…</string>
+    <string name="log_keeper_writing">écriture de keeper.jar (%1$d octets)…</string>
+    <string name="log_keeper_running">Keeper en cours d\'exécution ✓ (version %1$s)</string>
+    <string name="log_keeper_failed">Keeper n\'a pas pu démarrer</string>
+    <string name="log_keeper_error">erreur Keeper : %1$s</string>
+
+    <!-- ===== Camera names ===== -->
+    <string name="cam_front">Avant</string>
+    <string name="cam_rear">Arrière</string>
+    <string name="cam_right">Droite</string>
+    <string name="cam_left">Gauche</string>
+    <string name="cam_dvr">DVR (externe)</string>
+
+    <!-- ===== Camera setup log (CameraEngine) ===== -->
+    <string name="ce_adb_already_open">connexion ADB déjà ouverte ✓</string>
+    <string name="ce_adb_already_listening">127.0.0.1:5555 déjà à l\'écoute — connecté ✓</string>
+    <string name="ce_step1">ÉTAPE 1 — porte dérobée TS Settings (propriétés ADB sans fil)…</string>
+    <string name="ce_ts_bridge">pont TS : %1$s</string>
+    <string name="ce_step2">ÉTAPE 2 — service de test OTA : adb_enabled=1…</string>
+    <string name="ce_step3">ÉTAPE 3 — attente du démarrage d\'adbd sur TCP 5555 (4 s)…</string>
+    <string name="ce_connected">CONNECTÉ ✓</string>
+    <string name="ce_tls_fallback">Connexion impossible — désactivation du débogage sans fil TLS et retour au mode classique…</string>
+    <string name="ce_connected_classic">CONNECTÉ via le mode classique 5555 ✓</string>
+    <string name="ce_connect_failed">CONNEXION IMPOSSIBLE. Vérifiez : si une fenêtre d\'autorisation RSA est apparue sur l\'écran du véhicule, choisissez \"toujours autoriser\", puis appuyez de nouveau sur PRÉPARER LE VÉHICULE.</string>
+    <string name="ce_adb_not_connected_install">ADB non connecté — installation impossible.</string>
+    <string name="ce_asset_current">%1$s à jour (%2$d octets, %3$s…) ✓</string>
+    <string name="ce_asset_writing">écriture de %1$s (%2$d octets)…</string>
+    <string name="ce_asset_verified">%1$s vérifié ✓</string>
+    <string name="ce_asset_not_verified">%1$s N\'A PAS PU ÊTRE VÉRIFIÉ (hash non concordant)</string>
+    <string name="ce_asset_hash_failed">échec de la vérification du hash de %1$s</string>
+    <string name="ce_adb_not_connected">ADB non connecté.</string>
+    <string name="ce_helpers_current">Assistants en cours d\'exécution et à jour (version %1$d) — attente du flux des 4 caméras…</string>
+    <string name="ce_helper_binary_changed">Binaire de l\'assistant modifié (même version) — actualisation…</string>
+    <string name="ce_helper_diff_version">Assistant sur une version différente (%1$d) — actualisation…</string>
+    <string name="ce_helpers_closed">Assistants arrêtés — installation et démarrage…</string>
+    <string name="ce_helpers_started">4 instances de caméra démarrées — attente de leur ouverture (~10-30 s)…</string>
+    <string name="ce_helper_ready">Assistant prêt ✓ (caméra %1$d en flux, version %2$d)</string>
+    <string name="ce_waiting_helper_log">attente… journal de l\'assistant : %1$s</string>
+    <string name="ce_frame_stream_failed">impossible de vérifier le flux d\'images (60 s)</string>
+    <string name="ce_frame_stream_not_started">Le flux d\'images n\'a pas démarré. Journal de l\'assistant ci-dessus.</string>
+    <string name="ce_adb_connecting">ADB non connecté — connexion…</string>
+    <string name="ce_adb_connect_failed_files">Connexion ADB impossible ; les fichiers resteront sur le véhicule.</string>
+    <string name="ce_stopping_helpers">Arrêt des processus d\'assistance…</string>
+    <string name="ce_deleting_files">Suppression des fichiers installés…</string>
+    <string name="ce_remaining_files">Nombre de fichiers associés restants : %1$s</string>
+    <string name="ce_closing_adb">Désactivation de l\'ADB sans fil…</string>
+    <string name="ce_cleanup_done">Nettoyage terminé ✓ — l\'application peut maintenant être supprimée en toute sécurité.</string>
+
+    <!-- ===== Recorder (Mp4Recorder) ===== -->
+    <string name="rec_err_already_open">enregistrement déjà ouvert</string>
+    <string name="rec_err_mediastore">impossible de créer l\'entrée MediaStore</string>
+    <string name="rec_err_mp4_open">impossible d\'ouvrir le fichier MP4</string>
+    <string name="rec_recovered_count">%1$d enregistrement(s) récupéré(s)</string>
+    <string name="rec_unrecoverable_cleaned">%1$d irrécupérable(s) nettoyé(s)</string>
+    <string name="log_cam_open_failed">impossible d\'ouvrir la caméra %1$d pour l\'enregistrement : %2$s</string>
+    <string name="log_cam_segment_error">erreur de segment de la caméra %1$d : %2$s</string>
+    <string name="rec_recovered_msg">%1$d enregistrement(s) récupéré(s)</string>
+    <string name="rec_recovered_dropped">%1$d enregistrement(s) récupéré(s), %2$d irrécupérable(s) nettoyé(s)</string>
+    <string name="rec_err_no_sample">aucun échantillon dans le journal</string>
+</resources>

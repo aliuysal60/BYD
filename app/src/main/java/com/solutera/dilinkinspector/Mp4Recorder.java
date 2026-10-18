@@ -63,7 +63,7 @@ public final class Mp4Recorder {
      *  H.265/HEVC önceliklidir (H.264'ün ~yarısı boyut, aynı kalite); encoder
      *  yoksa H.264'e düşer. 4 kamera eşzamanlı kaydı için bitrate orta seviyede. */
     public synchronized void start(Context ctx) throws Exception {
-        if (encoder != null) throw new IllegalStateException("kayıt zaten açık");
+        if (encoder != null) throw new IllegalStateException(ctx.getString(R.string.rec_err_already_open));
         MediaFormat fmt = MediaFormat.createVideoFormat(mime, width, height);
         fmt.setInteger(MediaFormat.KEY_COLOR_FORMAT, pickColorFormat());
         // HEVC ~700 kbps ≈ H.264 1.4 Mbps görsel kalite. I-frame 2 sn (akıcı seek).
@@ -92,9 +92,9 @@ public final class Mp4Recorder {
             v.put(MediaStore.Video.Media.RELATIVE_PATH, "Movies/DiLinkCam");
             v.put(MediaStore.Video.Media.IS_PENDING, 1);
             uri = ctx.getContentResolver().insert(MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY), v);
-            if (uri == null) throw new IllegalStateException("MediaStore kaydı oluşturulamadı");
+            if (uri == null) throw new IllegalStateException(ctx.getString(R.string.rec_err_mediastore));
             pfd = ctx.getContentResolver().openFileDescriptor(uri, "rw");
-            if (pfd == null) throw new IllegalStateException("MP4 dosyası açılamadı");
+            if (pfd == null) throw new IllegalStateException(ctx.getString(R.string.rec_err_mp4_open));
             muxer = new MediaMuxer(pfd.getFileDescriptor(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
             filePath = "Movies/DiLinkCam/" + name;
         } else {
@@ -355,7 +355,9 @@ public final class Mp4Recorder {
                 try { ctx.getContentResolver().delete(pend.get(i), null, null); } catch (Exception ignored) {}
             }
         } catch (Exception ignored) {}
-        return recovered + " kayıt kurtarıldı" + (dropped > 0 ? ", " + dropped + " kurtarılamayan temizlendi" : "");
+        if (recovered == 0 && dropped == 0) return null;
+        return dropped > 0 ? ctx.getString(R.string.rec_recovered_dropped, recovered, dropped)
+                           : ctx.getString(R.string.rec_recovered_msg, recovered);
     }
 
     /** Günlükten yeni MP4 üret; başarılıysa günlüğü sil ve true döndür. */
@@ -409,7 +411,7 @@ public final class Mp4Recorder {
                     m.writeSampleData(track, ByteBuffer.wrap(data), info);
                 }
             }
-            if (track < 0) throw new IOException("günlükte örnek yok");
+            if (track < 0) throw new IOException(ctx != null ? ctx.getString(R.string.rec_err_no_sample) : "no sample");
             m.stop(); m.release(); pfd.close(); pfd = null;
             ContentValues done = new ContentValues(); done.put(MediaStore.Video.Media.IS_PENDING, 0);
             ctx.getContentResolver().update(out, done, null, null);

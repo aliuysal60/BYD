@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ParkCam</string>
+
+    <!-- ===== Navigation / menu ===== -->
+    <string name="menu_home">🏠  Home</string>
+    <string name="menu_live_camera">📷  Live Camera</string>
+    <string name="menu_settings">⚙  Settings</string>
+    <string name="menu_prepare_vehicle">★  Prepare Vehicle</string>
+    <string name="menu_prepare_removal">✕  Prepare for Removal</string>
+
+    <!-- ===== Home page ===== -->
+    <string name="section_status">Status</string>
+    <string name="section_event_log">Setup / Event Log</string>
+    <string name="section_live_camera">Live Camera</string>
+    <string name="label_live_camera">Live camera: </string>
+    <string name="home_hint">Recordings are saved under Movies/DiLinkCam. Recording starts automatically when the vehicle powers on, and stops 2 minutes after it powers off.</string>
+    <string name="live_hint">ALL 4 CAMERAS AT ONCE: when the vehicle is on, all four are recorded simultaneously (Movies/DiLinkCam). The camera you select here is shown in live view.</string>
+
+    <!-- status / vehicle / recording lines (prefix + dynamic value) -->
+    <string name="status_prefix">status: </string>
+    <string name="status_checking">status: checking…</string>
+    <string name="status_waiting_service">status: waiting for service…</string>
+    <string name="vehicle_prefix">vehicle: </string>
+    <string name="vehicle_unknown">vehicle: ?</string>
+    <string name="rec_off">recording: off</string>
+    <string name="rec_recording">recording: ● RECORDING %1$02d:%2$02d • %3$s</string>
+    <string name="live_off">live: off</string>
+    <string name="live_waiting">live: waiting…</string>
+    <string name="live_running">live: camera %1$d • %2$dx%3$d</string>
+
+    <!-- live button -->
+    <string name="btn_live_start">▶ START LIVE STREAM</string>
+    <string name="btn_live_stop">■ STOP STREAM</string>
+
+    <!-- toasts -->
+    <string name="toast_setup_started">Setup started — watch the log on the home page</string>
+    <string name="toast_cleanup_started">Cleanup started — watch the log on the home page</string>
+    <string name="toast_send_failed">Could not send: %1$s</string>
+
+    <!-- removal dialog -->
+    <string name="dlg_removal_title">Prepare for removal</string>
+    <string name="dlg_removal_message">The helper processes are stopped, the files under /data/local/tmp are deleted, and wireless ADB is turned off. Use this before uninstalling the app. (Your recordings stay in Movies/DiLinkCam.)</string>
+    <string name="dlg_cancel">Cancel</string>
+    <string name="dlg_clean">Clean up</string>
+
+    <!-- ===== Service: notification / status ===== -->
+    <string name="svc_starting">Starting…</string>
+    <string name="svc_status_starting">starting…</string>
+    <string name="svc_status_service_started">service started</string>
+    <string name="svc_status_ready">ready</string>
+    <string name="svc_status_camera_failed">camera could not open — will retry</string>
+    <string name="svc_status_adb_off">ADB off — will retry</string>
+    <string name="svc_status_error">error: %1$s</string>
+    <string name="svc_status_cleaned">cleaned up — the app can be removed</string>
+
+    <!-- service log messages -->
+    <string name="log_setup_begin">=== setup starting ===</string>
+    <string name="log_ready">=== READY ✓ (4 cameras, attempt %1$d) ===</string>
+    <string name="log_setup_error">setup error (attempt %1$d): %2$s</string>
+    <string name="log_setup_manual">setup triggered manually</string>
+    <string name="log_cleanup_begin">removal preparation started</string>
+    <string name="log_cleaned">=== cleaned up ===</string>
+    <string name="log_cleanup_error">cleanup error: %1$s</string>
+    <string name="log_recover">recovery: %1$s</string>
+    <string name="log_test_recording">TEST RECORDING triggered (60 s)</string>
+    <string name="log_rec_started">RECORDING STARTED (%1$s) — %2$d/4 cameras</string>
+    <string name="log_rec_stopped">RECORDING STOPPED (%1$s) — %2$d frames total</string>
+    <string name="log_old_rec_deleted">%1$d old recording(s) deleted (≥20 GB)</string>
+    <string name="log_recovered">recovered: %1$s</string>
+
+    <!-- recording reasons -->
+    <string name="reason_vehicle_on">vehicle on</string>
+    <string name="reason_test">test</string>
+    <string name="reason_test_file_trigger">test (file trigger)</string>
+    <string name="reason_manual_stop">stopped manually</string>
+    <string name="reason_test_elapsed">test duration elapsed</string>
+    <string name="reason_cleanup">cleanup</string>
+    <string name="reason_vehicle_off_tail">vehicle off +%1$d min elapsed</string>
+    <string name="log_vehicle_off_tail">vehicle off — recording continues for %1$d more min</string>
+
+    <!-- keeper -->
+    <string name="log_keeper_current">Keeper running and up to date ✓ (version %1$d)</string>
+    <string name="log_keeper_refresh">Keeper old/incompatible (version %1$d ≠ %2$d) — refreshing…</string>
+    <string name="log_keeper_closed">Keeper not running — installing and starting…</string>
+    <string name="log_keeper_writing">writing keeper.jar (%1$d bytes)…</string>
+    <string name="log_keeper_running">Keeper running ✓ (version %1$s)</string>
+    <string name="log_keeper_failed">Keeper could not start</string>
+    <string name="log_keeper_error">Keeper error: %1$s</string>
+
+    <!-- ===== Camera names ===== -->
+    <string name="cam_front">Front</string>
+    <string name="cam_rear">Rear</string>
+    <string name="cam_right">Right</string>
+    <string name="cam_left">Left</string>
+    <string name="cam_dvr">DVR (external)</string>
+
+    <!-- ===== Camera setup log (CameraEngine) ===== -->
+    <string name="ce_adb_already_open">ADB connection already open ✓</string>
+    <string name="ce_adb_already_listening">127.0.0.1:5555 already listening — connected ✓</string>
+    <string name="ce_step1">STEP 1 — TS Settings back door (wireless ADB properties)…</string>
+    <string name="ce_ts_bridge">TS bridge: %1$s</string>
+    <string name="ce_step2">STEP 2 — OTA test service: adb_enabled=1…</string>
+    <string name="ce_step3">STEP 3 — waiting for adbd to come up on TCP 5555 (4 s)…</string>
+    <string name="ce_connected">CONNECTED ✓</string>
+    <string name="ce_tls_fallback">Could not connect — turning off TLS wireless debug and falling back to classic mode…</string>
+    <string name="ce_connected_classic">CONNECTED via classic 5555 ✓</string>
+    <string name="ce_connect_failed">COULD NOT CONNECT. Check: if an RSA approval window appeared on the vehicle screen, choose "always allow", then tap PREPARE VEHICLE again.</string>
+    <string name="ce_adb_not_connected_install">ADB not connected — cannot install.</string>
+    <string name="ce_asset_current">%1$s up to date (%2$d bytes, %3$s…) ✓</string>
+    <string name="ce_asset_writing">writing %1$s (%2$d bytes)…</string>
+    <string name="ce_asset_verified">%1$s verified ✓</string>
+    <string name="ce_asset_not_verified">%1$s COULD NOT BE VERIFIED (hash mismatch)</string>
+    <string name="ce_asset_hash_failed">%1$s hash verification failed</string>
+    <string name="ce_adb_not_connected">ADB not connected.</string>
+    <string name="ce_helpers_current">Helpers running and up to date (version %1$d) — waiting for the 4-camera stream…</string>
+    <string name="ce_helper_binary_changed">Helper binary changed (same version) — refreshing…</string>
+    <string name="ce_helper_diff_version">Helper on a different version (%1$d) — refreshing…</string>
+    <string name="ce_helpers_closed">Helpers not running — installing and starting…</string>
+    <string name="ce_helpers_started">4 camera instances started — waiting for them to open (~10-30 s)…</string>
+    <string name="ce_helper_ready">Helper ready ✓ (camera %1$d streaming, version %2$d)</string>
+    <string name="ce_waiting_helper_log">waiting… helper log: %1$s</string>
+    <string name="ce_frame_stream_failed">frame stream could not be verified (60 s)</string>
+    <string name="ce_frame_stream_not_started">Frame stream did not start. Helper log above.</string>
+    <string name="ce_adb_connecting">ADB not connected — connecting…</string>
+    <string name="ce_adb_connect_failed_files">ADB could not connect; files will remain on the vehicle.</string>
+    <string name="ce_stopping_helpers">Stopping helper processes…</string>
+    <string name="ce_deleting_files">Deleting installed files…</string>
+    <string name="ce_remaining_files">Remaining related file count: %1$s</string>
+    <string name="ce_closing_adb">Turning off wireless ADB…</string>
+    <string name="ce_cleanup_done">Cleanup done ✓ — the app can now be safely removed.</string>
+
+    <!-- ===== Recorder (Mp4Recorder) ===== -->
+    <string name="rec_err_already_open">recording already open</string>
+    <string name="rec_err_mediastore">could not create MediaStore record</string>
+    <string name="rec_err_mp4_open">could not open MP4 file</string>
+    <string name="rec_recovered_count">%1$d recording(s) recovered</string>
+    <string name="rec_unrecoverable_cleaned">%1$d unrecoverable cleaned up</string>
+    <string name="log_cam_open_failed">camera %1$d could not open for recording: %2$s</string>
+    <string name="log_cam_segment_error">camera %1$d segment error: %2$s</string>
+    <string name="rec_recovered_msg">%1$d recording(s) recovered</string>
+    <string name="rec_recovered_dropped">%1$d recording(s) recovered, %2$d unrecoverable cleaned up</string>
+    <string name="rec_err_no_sample">no sample in journal</string>
+</resources>

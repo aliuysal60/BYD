@@ -94,14 +94,14 @@ public final class MainActivity extends Activity {
         content.addView(pageHome);
 
         LinearLayout statusCard=card(pageHome);
-        statusCard.addView(text("Durum",18,ACCENT));
-        stateLine=text("durum: kontrol ediliyor…",14,MUTED); statusCard.addView(stateLine);
-        vehLine=text("araç: ?",15,TEXT); statusCard.addView(vehLine);
-        recLine=text("kayıt: kapalı",15,TEXT); statusCard.addView(recLine);
-        statusCard.addView(text("Kayıtlar Movies/DiLinkCam altına yazılır. Araç AÇIK olunca kayıt otomatik başlar, kapandıktan 2 dk sonra durur.",11,MUTED));
+        statusCard.addView(text(getString(R.string.section_status),18,ACCENT));
+        stateLine=text(getString(R.string.status_checking),14,MUTED); statusCard.addView(stateLine);
+        vehLine=text(getString(R.string.vehicle_unknown),15,TEXT); statusCard.addView(vehLine);
+        recLine=text(getString(R.string.rec_off),15,TEXT); statusCard.addView(recLine);
+        statusCard.addView(text(getString(R.string.home_hint),11,MUTED));
 
         LinearLayout logCard=card(pageHome);
-        logCard.addView(text("Kurulum / Olay Günlüğü",14,ACCENT));
+        logCard.addView(text(getString(R.string.section_event_log),14,ACCENT));
         setupLog=text("",11,TEXT); setupLog.setTypeface(Typeface.MONOSPACE);
         setupLog.setTextIsSelectable(true);
         logCard.addView(setupLog);
@@ -112,13 +112,14 @@ public final class MainActivity extends Activity {
         content.addView(pageCamera);
 
         LinearLayout camCard=card(pageCamera);
-        camCard.addView(text("Canlı Kamera",18,ACCENT));
+        camCard.addView(text(getString(R.string.section_live_camera),18,ACCENT));
 
         LinearLayout row=new LinearLayout(this); camCard.addView(row);
         row.setGravity(android.view.Gravity.CENTER_VERTICAL);
-        row.addView(text("Canlı kamera: ",14,TEXT));
+        row.addView(text(getString(R.string.label_live_camera),14,TEXT));
         camSpin=new Spinner(this);
-        ArrayAdapter<String> ad=new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,CameraEngine.CAM_NAMES);
+        String[] camNames={getString(R.string.cam_front),getString(R.string.cam_rear),getString(R.string.cam_right),getString(R.string.cam_left),getString(R.string.cam_dvr)};
+        ArrayAdapter<String> ad=new ArrayAdapter<>(this,android.R.layout.simple_spinner_dropdown_item,camNames);
         camSpin.setAdapter(ad);
         int saved=getSharedPreferences("parkcam",0).getInt("live_cam",0);
         ParkCamService.LIVE_CAM=saved;
@@ -140,10 +141,10 @@ public final class MainActivity extends Activity {
         liveView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         camCard.addView(liveView,new LinearLayout.LayoutParams(-1,dp(380)));
 
-        liveBtn=button("▶ CANLI YAYINI AÇ",this::toggleLive);
+        liveBtn=button(getString(R.string.btn_live_start),this::toggleLive);
         camCard.addView(liveBtn);
-        liveStat=text("canlı: kapalı",12,MUTED); camCard.addView(liveStat);
-        camCard.addView(text("AKIŞTA 4 KAMERA BİRDEN: araç açıkken dördü aynı anda kayda alınır (Movies/DiLinkCam). Burada seçtiğin kamera canlı izlemede gösterilir.",11,MUTED));
+        liveStat=text(getString(R.string.live_off),12,MUTED); camCard.addView(liveStat);
+        camCard.addView(text(getString(R.string.live_hint),11,MUTED));
 
         // ---- sol menü (çekmece) ----
         menuPanel=new LinearLayout(this);
@@ -157,21 +158,21 @@ public final class MainActivity extends Activity {
         menuPanel.addView(text("ParkCam",18,ACCENT));
         menuPanel.addView(text(" ",8,MUTED));
 
-        Button home=menuItem("🏠  Ana Sayfa",()->{ showPage(0); toggleMenu(false); });
+        Button home=menuItem(getString(R.string.menu_home),()->{ showPage(0); toggleMenu(false); });
         menuPanel.addView(home);
-        Button cam=menuItem("📷  Canlı Kamera",()->{ showPage(1); toggleMenu(false); });
+        Button cam=menuItem(getString(R.string.menu_live_camera),()->{ showPage(1); toggleMenu(false); });
         menuPanel.addView(cam);
         menuPanel.addView(text(" ",8,MUTED));
-        menuPanel.addView(text("⚙  Ayarlar",15,MUTED));
+        menuPanel.addView(text(getString(R.string.menu_settings),15,MUTED));
 
-        Button prep=menuItem("★  Aracı Hazırla",()->{
+        Button prep=menuItem(getString(R.string.menu_prepare_vehicle),()->{
             toggleMenu(false);
             showPage(0);
             send("setup");
-            toast("Kurulum başladı — günlüğü anasayfada izleyin");
+            toast(getString(R.string.toast_setup_started));
         });
         menuPanel.addView(prep);
-        Button clean=menuItem("✕  Kaldırmaya Hazırla",()->confirmCleanup());
+        Button clean=menuItem(getString(R.string.menu_prepare_removal),()->confirmCleanup());
         menuPanel.addView(clean);
 
         rootFrame.addView(menuPanel);
@@ -182,12 +183,12 @@ public final class MainActivity extends Activity {
     private void confirmCleanup() {
         toggleMenu(false);
         showPage(0);
-        new AlertDialog.Builder(this).setTitle("Kaldırma hazırlığı")
-            .setMessage("Yardımcı süreçler durdurulur, /data/local/tmp dosyaları silinir ve kablosuz ADB kapatılır. Uygulamayı kaldırmadan önce kullan. (Kayıtların Movies/DiLinkCam'de kalır.)")
-            .setNegativeButton("Vazgeç",null)
-            .setPositiveButton("Temizle",(d,w)->{
+        new AlertDialog.Builder(this).setTitle(getString(R.string.dlg_removal_title))
+            .setMessage(getString(R.string.dlg_removal_message))
+            .setNegativeButton(getString(R.string.dlg_cancel),null)
+            .setPositiveButton(getString(R.string.dlg_clean),(d,w)->{
                 send("cleanup");
-                toast("Temizlik başladı — günlüğü anasayfada izleyin");
+                toast(getString(R.string.toast_cleanup_started));
             }).show();
     }
 
@@ -195,13 +196,13 @@ public final class MainActivity extends Activity {
         try {
             Intent i=new Intent(this,ParkCamService.class).setAction(action);
             startService(i);
-        } catch (Exception e) { toast("Gönderilemedi: "+e.getMessage()); }
+        } catch (Exception e) { toast(getString(R.string.toast_send_failed, String.valueOf(e.getMessage()))); }
     }
 
     private void showPage(int which) {
         pageHome.setVisibility(which==0?View.VISIBLE:View.GONE);
         pageCamera.setVisibility(which==1?View.VISIBLE:View.GONE);
-        if (which!=1 && liveOn) { liveOn=false; ParkCamService.WANT_LIVE=false; liveBtn.setText("▶ CANLI YAYINI AÇ"); liveStat.setText("canlı: kapalı"); }
+        if (which!=1 && liveOn) { liveOn=false; ParkCamService.WANT_LIVE=false; liveBtn.setText(getString(R.string.btn_live_start)); liveStat.setText(getString(R.string.live_off)); }
     }
 
     private void toggleMenu(boolean show) {
@@ -213,8 +214,8 @@ public final class MainActivity extends Activity {
     private void toggleLive() {
         liveOn=!liveOn;
         ParkCamService.WANT_LIVE=liveOn;
-        liveBtn.setText(liveOn?"■ YAYINI DURDUR":"▶ CANLI YAYINI AÇ");
-        liveStat.setText(liveOn?"canlı: bekleniyor…":"canlı: kapalı");
+        liveBtn.setText(liveOn?getString(R.string.btn_live_stop):getString(R.string.btn_live_start));
+        liveStat.setText(liveOn?getString(R.string.live_waiting):getString(R.string.live_off));
     }
 
     /** 2 sn'de bir durum; canlı açıkken 300 ms'de bir kare */
@@ -223,17 +224,17 @@ public final class MainActivity extends Activity {
             @Override public void run() {
                 if (isFinishing()||isDestroyed()) return;
                 if (!ParkCamService.IS_RUNNING) {
-                    stateLine.setText("durum: servis bekleniyor…");
+                    stateLine.setText(getString(R.string.status_waiting_service));
                 } else {
-                    stateLine.setText("durum: "+ParkCamService.STATUS);
+                    stateLine.setText(getString(R.string.status_prefix)+ParkCamService.STATUS);
                 }
-                vehLine.setText("araç: "+ParkCamService.VEHICLE);
+                vehLine.setText(getString(R.string.vehicle_prefix)+ParkCamService.VEHICLE);
                 if (ParkCamService.RECORDING) {
                     long sec=(System.currentTimeMillis()-ParkCamService.REC_START_MS)/1000;
-                    recLine.setText(String.format(Locale.US,"kayıt: ● KAYITTA %02d:%02d • %s",sec/60,sec%60,ParkCamService.REC_FILE));
+                    recLine.setText(getString(R.string.rec_recording,sec/60,sec%60,ParkCamService.REC_FILE));
                     recLine.setTextColor(RED);
                 } else {
-                    recLine.setText("kayıt: kapalı");
+                    recLine.setText(getString(R.string.rec_off));
                     recLine.setTextColor(TEXT);
                 }
                 setupLog.setText(ParkCamService.SERVICE_LOG);
@@ -241,7 +242,7 @@ public final class MainActivity extends Activity {
                     android.graphics.Bitmap b=ParkCamService.LIVE_BMP;
                     if (b!=null) {
                         liveView.setImageBitmap(b);
-                        liveStat.setText(String.format(Locale.US,"canlı: kamera %d • %dx%d",ParkCamService.LIVE_CAM,CameraEngine.OUT_W,CameraEngine.OUT_H));
+                        liveStat.setText(getString(R.string.live_running,ParkCamService.LIVE_CAM,CameraEngine.OUT_W,CameraEngine.OUT_H));
                     }
                 }
                 ui.postDelayed(this, liveOn?300:2000);
