@@ -1,0 +1,37 @@
+[
+  {
+    "file": "libadb-android-3.1.1-source.zip",
+    "url": "https://codeload.github.com/MuntashirAkon/libadb-android/zip/refs/tags/3.1.1",
+    "sha256": "8cdb9b909991ab96da211b293175357345c9d727a22221f36b8d573da7bb1de8"
+  },
+  {
+    "file": "spake2-android-2.2.1.aar",
+    "url": "https://jitpack.io/com/github/MuntashirAkon/spake2-java/spake2-android/2.2.1/spake2-android-2.2.1.aar",
+    "sha256": "8798fb6c04b5d53a6307ed9481e9afe563227abd4e8b9e917c8514fa850071bb"
+  },
+  {
+    "file": "conscrypt-android-2.5.3.aar",
+    "url": "https://repo.maven.apache.org/maven2/org/conscrypt/conscrypt-android/2.5.3/conscrypt-android-2.5.3.aar",
+    "sha256": "551ae4e301c571760d1791e647db6ed1dcb10d34dcae7aa12b67f220f2ce98d1"
+  },
+  {
+    "file": "annotation-1.3.0.jar",
+    "url": "https://dl.google.com/dl/android/maven2/androidx/annotation/annotation/1.3.0/annotation-1.3.0.jar",
+    "sha256": "97dc45afefe3a1e421da42b8b6e9f90491477c45fc6178203e3a5e8a05ee8553"
+  },
+  {
+    "file": "bcprov-jdk15to18-1.81.jar",
+    "url": "https://repo.maven.apache.org/maven2/org/bouncycastle/bcprov-jdk15to18/1.81/bcprov-jdk15to18-1.81.jar",
+    "sha256": "0ef9c4d9536719aaa1c92a7c694d87981fa9d4d64dd9479cc322a08aebbc651e"
+  },
+  {
+    "file": "bcpkix-jdk15to18-1.81.jar",
+    "url": "https://repo.maven.apache.org/maven2/org/bouncycastle/bcpkix-jdk15to18/1.81/bcpkix-jdk15to18-1.81.jar",
+    "sha256": "aa204a0c8b5f5564bf2b1a055e2550534b24217b23f63ea4cb762c908ff811d9"
+  },
+  {
+    "file": "bcutil-jdk15to18-1.81.jar",
+    "url": "https://repo.maven.apache.org/maven2/org/bouncycastle/bcutil-jdk15to18/1.81/bcutil-jdk15to18-1.81.jar",
+    "sha256": "82fc2c3bc17c06a6fc4e28b73adf1601a01b91a97f7b72c0cfbabaf8bf1f3fe7"
+  }
+]

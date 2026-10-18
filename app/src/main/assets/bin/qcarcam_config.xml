@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright (c) 2019-2021 Qualcomm Technologies, Inc.
+  All Rights Reserved.
+  Confidential and Proprietary - Qualcomm Technologies, Inc.
+ -->
+
+<qcarcam_inputs>
+    <input_device>
+        <properties input_id="0" node="/dev/video51"/>
+        <output_setting width="1920" height="1024" pixelformat="V4L2_PIX_FMT_UYVY"/>
+    </input_device>
+    <input_device>
+        <properties input_id="1" node="/dev/video52"/>
+        <output_setting width="1920" height="1024" pixelformat="V4L2_PIX_FMT_UYVY"/>
+    </input_device>
+    <input_device>
+        <properties input_id="2" node="/dev/video53"/>
+        <output_setting width="1920" height="1024" pixelformat="V4L2_PIX_FMT_UYVY"/>
+    </input_device>
+    <input_device>
+        <properties input_id="3" node="/dev/video54"/>
+        <output_setting width="1920" height="1024" pixelformat="V4L2_PIX_FMT_UYVY"/>
+    </input_device>
+    <input_device>
+        <properties input_id="4" node="/dev/video55"/>
+        <output_setting width="1920" height="1024" pixelformat="V4L2_PIX_FMT_UYVY"/>
+    </input_device>
+    <input_device>
+        <properties input_id="5" node="/dev/video56"/>
+        <output_setting width="1920" height="1024" pixelformat="V4L2_PIX_FMT_UYVY"/>
+    </input_device>
+    <input_device>
+        <properties input_id="8" node="/dev/video57"/>
+        <output_setting width="1920" height="1024" pixelformat="V4L2_PIX_FMT_UYVY"/>
+    </input_device>
+    <input_device>
+        <properties input_id="9" node="/dev/video58"/>
+        <output_setting width="1920" height="1024" pixelformat="V4L2_PIX_FMT_UYVY"/>
+    </input_device>
+</qcarcam_inputs>

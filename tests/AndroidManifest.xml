@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.solutera.dilinkinspector.tests">
+    <uses-sdk android:minSdkVersion="23" android:targetSdkVersion="32" />
+    <application android:label="Inspector integration tests" />
+    <instrumentation android:name="com.solutera.dilinkinspector.IntegrationTests" android:targetPackage="com.solutera.dilinkinspector" />
+</manifest>
