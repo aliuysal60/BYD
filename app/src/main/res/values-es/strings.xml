@@ -141,4 +141,8 @@
     <string name="rec_recovered_msg">%1$d grabación(es) recuperada(s)</string>
     <string name="rec_recovered_dropped">%1$d grabación(es) recuperada(s), %2$d irrecuperable(s) eliminada(s)</string>
     <string name="rec_err_no_sample">no hay muestra en el diario</string>
+    <string name="btn_save_now">Guardar último clip</string>
+    <string name="toast_save_now">Guardando el clip actual — aparecerá en Movies/DiLinkCam</string>
+    <string name="log_flush_saved">Clip actual guardado para %1$d cámara(s) — reproducible en Movies/DiLinkCam</string>
+    <string name="log_flush_not_recording">No hay grabación activa para guardar</string>
 </resources>

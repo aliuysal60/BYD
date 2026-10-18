@@ -141,4 +141,8 @@
     <string name="rec_recovered_msg">%1$d Aufnahme(n) wiederhergestellt</string>
     <string name="rec_recovered_dropped">%1$d Aufnahme(n) wiederhergestellt, %2$d nicht wiederherstellbare bereinigt</string>
     <string name="rec_err_no_sample">kein Sample im Journal</string>
+    <string name="btn_save_now">Letzten Clip speichern</string>
+    <string name="toast_save_now">Aktueller Clip wird gespeichert — erscheint in Movies/DiLinkCam</string>
+    <string name="log_flush_saved">Aktueller Clip für %1$d Kamera(s) gespeichert — abspielbar in Movies/DiLinkCam</string>
+    <string name="log_flush_not_recording">Keine aktive Aufnahme zum Speichern</string>
 </resources>

@@ -39,6 +39,7 @@ public final class MainActivity extends Activity {
 
     private LinearLayout menuPanel, pageHome, pageCamera;
     private TextView stateLine, vehLine, recLine, liveStat, setupLog;
+    private Button saveNowBtn;
     private ImageView liveView;
     private Button liveBtn;
     private Spinner camSpin;
@@ -97,7 +98,18 @@ public final class MainActivity extends Activity {
         statusCard.addView(text(getString(R.string.section_status),18,ACCENT));
         stateLine=text(getString(R.string.status_checking),14,MUTED); statusCard.addView(stateLine);
         vehLine=text(getString(R.string.vehicle_unknown),15,TEXT); statusCard.addView(vehLine);
-        recLine=text(getString(R.string.rec_off),15,TEXT); statusCard.addView(recLine);
+        // kayıt süresi + "Son kaydı kaydet" butonu yan yana
+        LinearLayout recRow=new LinearLayout(this);
+        recRow.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        recLine=text(getString(R.string.rec_off),15,TEXT);
+        recRow.addView(recLine,new LinearLayout.LayoutParams(0,-2,1f));
+        saveNowBtn=button(getString(R.string.btn_save_now),()->{
+            send("saveNow");
+            toast(getString(R.string.toast_save_now));
+        });
+        saveNowBtn.setVisibility(View.GONE);   // yalnız kayıt sürerken görünür (pollStatus yönetir)
+        recRow.addView(saveNowBtn);
+        statusCard.addView(recRow);
         statusCard.addView(text(getString(R.string.home_hint),11,MUTED));
 
         LinearLayout logCard=card(pageHome);
@@ -233,9 +245,11 @@ public final class MainActivity extends Activity {
                     long sec=(System.currentTimeMillis()-ParkCamService.REC_START_MS)/1000;
                     recLine.setText(getString(R.string.rec_recording,sec/60,sec%60,ParkCamService.REC_FILE));
                     recLine.setTextColor(RED);
+                    if (saveNowBtn!=null) saveNowBtn.setVisibility(View.VISIBLE);
                 } else {
                     recLine.setText(getString(R.string.rec_off));
                     recLine.setTextColor(TEXT);
+                    if (saveNowBtn!=null) saveNowBtn.setVisibility(View.GONE);
                 }
                 setupLog.setText(ParkCamService.SERVICE_LOG);
                 if (liveOn) {

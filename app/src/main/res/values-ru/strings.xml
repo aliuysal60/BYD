@@ -141,4 +141,8 @@
     <string name="rec_recovered_msg">Восстановлено записей: %1$d</string>
     <string name="rec_recovered_dropped">Восстановлено записей: %1$d, удалено невосстановимых: %2$d</string>
     <string name="rec_err_no_sample">нет сэмпла в журнале</string>
+    <string name="btn_save_now">Сохранить последний клип</string>
+    <string name="toast_save_now">Сохранение текущего клипа — появится в Movies/DiLinkCam</string>
+    <string name="log_flush_saved">Текущий клип сохранён для %1$d камер(ы) — воспроизводится в Movies/DiLinkCam</string>
+    <string name="log_flush_not_recording">Нет активной записи для сохранения</string>
 </resources>

@@ -63,3 +63,33 @@
 
 ### Sonraki Adım
 - (Opsiyonel) Araçta sistem dili değiştirip görsel doğrulama
+
+---
+
+## [2026-10-18] — Kesilen kayıt kurtarma + ADB kararlılığı + "Son kaydı kaydet" butonu
+
+**Faz:** Hata düzeltme + özellik
+**Durum:** Tamamlandı (buton araç testi bekliyor)
+
+### Yapılanlar
+- Journal kurtarma düzeltildi: remux HEVC yerine kayıt codec'ini (AVC) kullanıyor
+  (journal v2 başlıkta MIME); journal adı MediaStore gerçek display_name ile
+  eşleşiyor (" (N)" dahil). Araçta doğrulandı: kesilen kayıt 59 sn geçerli mp4
+  olarak kurtarıldı.
+- ADB kararsızlığı: BootReceiver boot-adb thread önce 5555 açık mı bakıyor,
+  açıksa property yazmıyor (adbd gereksiz restart → bağlantı kopması önlendi).
+- "Son kaydı kaydet" butonu: kayıt süresi satırının yanında, yalnız kayıt
+  sürerken görünür. Basınca flushSegments() 4 kameranın o anki segmentini hemen
+  kapatır (oynatılabilir mp4) + kesintisiz yeni dosyada devam. Olay anında
+  kaydı 10 dk beklemeden izleyebilmek için.
+- 6 dile 4 yeni string (btn_save_now, toast_save_now, log_flush_*).
+
+### Oluşturulan/Değiştirilen Dosyalar
+- `.../Mp4Recorder.java` — journal v2 + codec + display_name eşleşmesi
+- `.../BootReceiver.java` — 5555 önce kontrol
+- `.../ParkCamService.java` — flushSegments() + saveNow action
+- `.../MainActivity.java` — "Son kaydı kaydet" butonu
+- `app/src/main/res/values*/strings.xml` — 4 yeni anahtar x6 dil
+
+### Sonraki Adım
+- Araç açılınca: kur, kayıt sürerken butona bas, o anki segment oynatılabilir mp4 oluyor mu test et

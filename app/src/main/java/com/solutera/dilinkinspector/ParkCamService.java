@@ -146,6 +146,9 @@ public final class ParkCamService extends Service {
             new Thread(this::cleanupAll, "parkcam-cleanup").start();
         } else if ("stopRec".equals(action)) {
             stopRecording(getString(R.string.reason_manual_stop));
+        } else if ("saveNow".equals(action)) {
+            // "Son kaydı kaydet": o anki segmenti hemen oynatılabilir yap
+            new Thread(this::flushSegments, "parkcam-flush").start();
         } else if ("recTest".equals(action)) {
             // 60 sn'lik deneme kaydı — aracı açmadan boru hattını doğrulamak için
             log(getString(R.string.log_test_recording));
@@ -545,6 +548,31 @@ public final class ParkCamService extends Service {
             log(getString(R.string.log_cam_segment_error, i, String.valueOf(e)));
             recorders[i] = null;
         }
+    }
+
+    /** "Son kaydı kaydet" düğmesi: kayıt sürerken 4 kameranın O ANKİ segmentini
+     *  HEMEN kapatır (10 dk beklemeden) → o ana kadarki görüntü oynatılabilir MP4
+     *  olarak Movies/DiLinkCam'e yazılır; kayıt kesintisiz yeni dosyada sürer.
+     *  Olay anında kullanıcının kaydı hemen izleyebilmesi için. */
+    synchronized void flushSegments() {
+        if (!RECORDING) { log(getString(R.string.log_flush_not_recording)); return; }
+        long now = System.currentTimeMillis();
+        int saved = 0;
+        for (int i = 0; i < 4; i++) {
+            if (recorders[i] == null) continue;
+            try {
+                recorders[i].stop(this);           // o anki dosyayı düzgün kapat (moov yazılır → oynatılabilir)
+                Mp4Recorder.ensureFreeSpace(this, MIN_FREE);
+                recorders[i] = new Mp4Recorder(CameraEngine.OUT_W, CameraEngine.OUT_H);
+                recorders[i].start(this);          // kayıt kesintisiz yeni dosyada devam
+                segStart[i] = now;
+                saved++;
+            } catch (Exception e) {
+                log(getString(R.string.log_cam_segment_error, i, String.valueOf(e)));
+                recorders[i] = null;
+            }
+        }
+        log(getString(R.string.log_flush_saved, saved));
     }
 
     // ================= kare pompası (v9: DONMA ÖNLEYİCİ) =================

@@ -141,4 +141,8 @@
     <string name="rec_recovered_msg">%1$d kayıt kurtarıldı</string>
     <string name="rec_recovered_dropped">%1$d kayıt kurtarıldı, %2$d kurtarılamayan temizlendi</string>
     <string name="rec_err_no_sample">günlükte örnek yok</string>
+    <string name="btn_save_now">Son kaydı kaydet</string>
+    <string name="toast_save_now">Geçerli kayıt kaydediliyor — Movies/DiLinkCam altında görünecek</string>
+    <string name="log_flush_saved">%1$d kamera için geçerli kayıt kaydedildi — Movies/DiLinkCam\'de oynatılabilir</string>
+    <string name="log_flush_not_recording">Kaydedilecek aktif kayıt yok</string>
 </resources>

@@ -141,4 +141,8 @@
     <string name="rec_recovered_msg">%1$d recording(s) recovered</string>
     <string name="rec_recovered_dropped">%1$d recording(s) recovered, %2$d unrecoverable cleaned up</string>
     <string name="rec_err_no_sample">no sample in journal</string>
+    <string name="btn_save_now">Save last clip</string>
+    <string name="toast_save_now">Saving the current clip — it will appear in Movies/DiLinkCam</string>
+    <string name="log_flush_saved">Current clip saved for %1$d camera(s) — playable in Movies/DiLinkCam</string>
+    <string name="log_flush_not_recording">No active recording to save</string>
 </resources>
